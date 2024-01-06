@@ -1,0 +1,3 @@
+(library
+  (name writing_generators)
+  (libraries tezt-bam))

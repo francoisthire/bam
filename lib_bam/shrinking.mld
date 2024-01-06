@@ -1,0 +1,198 @@
+{1:shrinking A primer on shrinking}
+
+Shrinking is an integral part of the [Bam] library, focused on
+enhancing the generation of counter-examples. While the standard
+library aims to produce adequate counter-examples, it may encounter
+limitations with complex generators. Understanding the mechanisms of
+shrinking in [Bam] is crucial for developing effective shrinking
+strategies. This documentation provides insights into these
+mechanisms.
+
+The functions {!val:Bam.Std.bind} and {!val:Bam.Std.crunch} are
+examples of function within [Bam] that facilitate the shrinking
+process. Their operational details and applications are explained in
+subsequent sections.
+
+A general idea for defining generators with internal shrinking is to
+use the following data-type:
+
+{[
+type 'a t = unit -> 'a Tree.t
+]}
+
+n this structure, the root of the tree represents the original
+generated value, and the child nodes contain smaller values for the
+shrinker to use in the process of shrinking.
+
+The structure of a tree within the [Bam] library is defined as
+follows:
+
+{[
+type 'a tree =
+  {root : 'a;
+   children : 'a tree Seq.t
+  }
+]}
+
+This definition uses a sequence [Seq.t] to manage the values for
+shrinking, allowing these values to be loaded only when needed. This
+approach implies that the branching factor of the tree is
+unbounded. Library-defined generators are designed to prevent
+excessive branching, ensuring that the shrinking process remains
+time-efficient.
+
+Similarly, the depth of the tree is also unbounded. However, the
+generators in the library are constructed to avoid excessive depth,
+maintaining efficiency in the shrinking process.
+
+A key aspect of the library's functionality is providing a monadic
+interface for the generators.
+
+{2 Defining a monadic interface}
+
+The process of implementing a monadic interface for the ['a tree] data
+type begins with the return function. Defining return is
+straightforward:
+
+{[
+let return root = {root; children = Seq.empty}
+]}
+
+However, the implementation of the bind function is more complex:
+
+{[
+let rec bind tree f =
+  let root_tree = f tree in
+  let children_trees = Seq.map (fun tree -> bind tree f) tree.children in
+  let root = root_tree.root in
+  (* Now we have two sequences for the children namely root_tree.children
+     and cihldren_trees. How should we combine them? *)
+  {root;
+   children = Seq.append root_tree.children children_trees}
+]}
+
+The function's comment highlights a decision point: the method used to
+combine two sequences of trees, [root_tree.children] and
+[children_trees]. While [Seq.append] is a straightforward option, the
+possibility of employing alternative strategies exists. The library's
+merge-related functions facilitate the definition of custom methods
+for combining these child sequences.
+
+
+With the definition of the bind function for trees established, the
+next step is to implement the bind function for generators:
+
+{[
+let bind gen f = fun () ->
+    let tree = gen () in
+    bind tree (fun x -> f x ())    
+]}
+
+Although this implementation is correctly typed, its practical
+behavior does not align entirely with the desired outcome. This
+discrepancy becomes evident when attempting to define a basic
+generator for integers.
+
+{2 Generate integers}
+
+Consider the task of creating a generator for small integers. A
+straightforward approach might involve constructing a tree where the
+root is the drawn value, and the children are all values from [0] to
+[value-1].
+
+{[
+let gen_int : max:int = fun () ->
+  let root = Random.int max in
+  let children = Seq.ints 0 |> Seq.take root in
+  {root;children}
+]}
+
+However, this approach proves to be highly inefficient for larger
+integer values. [Bam] generators use a more efficient method using
+dichotomy as illustrated in [Tree.binary_search].
+
+{2 A side-effect issue}
+
+The issue of side effects becomes evident when using the previously
+defined generator to create a generator for pairs of integers:
+
+{[
+let gen_pair () =
+  bind (gen_int ~max:10 ()) (fun x ->
+    bind (gen_int ~max:20 ()) (fun y ->
+      return (x,y)))
+]}
+
+For instance, this generator might yield a root value like
+(3,5). However, the children values produced can be unexpected, such
+as [(2,15)], [(1,7)], [(0,4)], [(2,19)], ... and so on. These values
+reveal that while the first component of the tree shows decreasing
+values, the second component does not follow this pattern. The
+underlying reason is that the bind function for the tree applies the
+function f to the smaller values of the first tree (created by
+[gen_int ~max:10 ()]). Each time f is called, it invokes [gen_int
+~max:20 ()], generating new values for the second component.
+
+This issue is well-known in the context of generators, leading
+some libraries to advise against using bind for such scenarios. An
+alternative approach to defining a generator for pairs might look like
+this: 
+
+{[
+let gen_pair () =
+    let x = gen_int ~max:10 () in
+    let y = gen_int ~max:10 () in
+    let children = (* Define a shrinker for pairs. *) assert false in
+    {root = (x,y); children}
+]}
+
+Here, [x] and [y] are generated independently, and a specific shrinker for
+pairs needs to be defined to handle the shrinking process
+appropriately.
+
+Integrated shrinking within a library requires the establishment of a
+shrinker for pairs, and there can be several possible functions to
+achieve this. However, this approach has its drawbacks:
+
+- Predicting the shrinking strategy can be challenging.
+- The library must implement a variety of basic combinators to address this limitation.
+
+To mitigate these issues, the [bam] library opts for a simpler
+approach, relying on a few foundational building blocks like
+[bind]. This choice offers two primary advantages:
+
+- Improved predictability: Understanding the [bind] function is key to
+  grasping most of the shrinking strategies employed in this library.
+
+- A more streamlined and reliable core ("trusted kernel").
+
+{2 Generators should be pure}
+
+Addressing the aforementioned problem involves two main steps:
+
+Step 1: Modify the generator's type to eliminate implicit
+side-effects:
+
+
+{[
+type 'a t = Random.state -> 'a Tree.t
+]}
+
+Step 2: Revise the bind function to split the state into two
+independent states:
+
+{[
+let bind gen f = fun () ->
+    let rs_left, rs_right = Random.split rs in    
+    let tree = gen rs_left in
+    bind tree (fun x -> f x rs_right)    
+]}
+
+These changes ensure that the generation process remains pure, with
+side effects being explicitly managed through the use of distinct
+random states.
+
+
+
+  
+

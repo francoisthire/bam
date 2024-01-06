@@ -1,0 +1,4 @@
+(library
+ (name tezt_bam)
+ (public_name tezt-bam)
+ (libraries tezt bam mtime mtime.clock.os))

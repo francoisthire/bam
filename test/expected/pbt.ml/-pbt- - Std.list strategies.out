@@ -1,0 +1,216 @@
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is prefix)
+Generated list: [6 7 6 4 2]
+First row: [] [6] [6 7] [6 7 6 4] [0 7 6 4 2] [1 7 6 4 2] [2 7 6 4 2] [4 7 6 4 2] [5 7 6 4 2] [6 0 6 4 2] [6 1 6 4 2] [6 2 6 4 2] [6 4 6 4 2] [6 6 6 4 2] [6 7 0 4 2] [6 7 1 4 2] [6 7 2 4 2] [6 7 4 4 2] [6 7 5 4 2] [6 7 6 0 2] [6 7 6 1 2] [6 7 6 2 2] [6 7 6 3 2] [6 7 6 4 0] [6 7 6 4 1] 
+Number of elements in the first row: 25
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is prefix)
+Generated list: [6 7 6 4 2 1 7 7 0 4 6 5 2 7 6]
+Number of elements in the first row: 61
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is suffix)
+Generated list: [6 7 6 4 2]
+First row: [] [2] [4 2] [7 6 4 2] [0 7 6 4 2] [1 7 6 4 2] [2 7 6 4 2] [4 7 6 4 2] [5 7 6 4 2] [6 0 6 4 2] [6 1 6 4 2] [6 2 6 4 2] [6 4 6 4 2] [6 6 6 4 2] [6 7 0 4 2] [6 7 1 4 2] [6 7 2 4 2] [6 7 4 4 2] [6 7 5 4 2] [6 7 6 0 2] [6 7 6 1 2] [6 7 6 2 2] [6 7 6 3 2] [6 7 6 4 0] [6 7 6 4 1] 
+Number of elements in the first row: 25
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is suffix)
+Generated list: [6 7 6 4 2 1 7 7 0 4 6 5 2 7 6]
+Number of elements in the first row: 61
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 0)
+Generated list: [6 7 6 4 2]
+First row: [] [6] [6 7] [6 7 6 4] [0 7 6 4 2] [1 7 6 4 2] [2 7 6 4 2] [4 7 6 4 2] [5 7 6 4 2] [6 0 6 4 2] [6 1 6 4 2] [6 2 6 4 2] [6 4 6 4 2] [6 6 6 4 2] [6 7 0 4 2] [6 7 1 4 2] [6 7 2 4 2] [6 7 4 4 2] [6 7 5 4 2] [6 7 6 0 2] [6 7 6 1 2] [6 7 6 2 2] [6 7 6 3 2] [6 7 6 4 0] [6 7 6 4 1] 
+Number of elements in the first row: 25
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 0)
+Generated list: [6 7 6 4 2 1 7 7 0 4 6 5 2 7 6]
+Number of elements in the first row: 61
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 1)
+Generated list: [6 7 6 4 2]
+First row: [] [6] [7] [6 7] [6 6] [7 6] [6 7 6 4] [6 7 6 2] [6 7 4 2] [6 6 4 2] [7 6 4 2] [0 7 6 4 2] [1 7 6 4 2] [2 7 6 4 2] [4 7 6 4 2] [5 7 6 4 2] [6 0 6 4 2] [6 1 6 4 2] [6 2 6 4 2] [6 4 6 4 2] [6 6 6 4 2] [6 7 0 4 2] [6 7 1 4 2] [6 7 2 4 2] [6 7 4 4 2] [6 7 5 4 2] [6 7 6 0 2] [6 7 6 1 2] [6 7 6 2 2] [6 7 6 3 2] [6 7 6 4 0] [6 7 6 4 1] 
+Number of elements in the first row: 32
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 1)
+Generated list: [6 7 6 4 2 1 7 7 0 4 6 5 2 7 6]
+Number of elements in the first row: 108
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 2)
+Generated list: [6 7 6 4 2]
+First row: [] [6] [7] [6] [6 7] [6 6] [6 4] [7 6] [7 4] [6 4] [6 7 6 4] [6 7 6 2] [6 7 4 2] [6 6 4 2] [7 6 4 2] [0 7 6 4 2] [1 7 6 4 2] [2 7 6 4 2] [4 7 6 4 2] [5 7 6 4 2] [6 0 6 4 2] [6 1 6 4 2] [6 2 6 4 2] [6 4 6 4 2] [6 6 6 4 2] [6 7 0 4 2] [6 7 1 4 2] [6 7 2 4 2] [6 7 4 4 2] [6 7 5 4 2] [6 7 6 0 2] [6 7 6 1 2] [6 7 6 2 2] [6 7 6 3 2] [6 7 6 4 0] [6 7 6 4 1] 
+Number of elements in the first row: 36
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 2)
+Generated list: [6 7 6 4 2 1 7 7 0 4 6 5 2 7 6]
+Number of elements in the first row: 307
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip smart)
+Generated list: [6 7 6 4 2]
+First row: [] [6] [7] [6] [4] [2] [6 7] [6 6] [6 4] [6 2] [7 6] [7 4] [7 2] [6 4] [6 2] [4 2] [6 7 6 4] [6 7 6 2] [6 7 4 2] [6 6 4 2] [7 6 4 2] [0 7 6 4 2] [1 7 6 4 2] [2 7 6 4 2] [4 7 6 4 2] [5 7 6 4 2] [6 0 6 4 2] [6 1 6 4 2] [6 2 6 4 2] [6 4 6 4 2] [6 6 6 4 2] [6 7 0 4 2] [6 7 1 4 2] [6 7 2 4 2] [6 7 4 4 2] [6 7 5 4 2] [6 7 6 0 2] [6 7 6 1 2] [6 7 6 2 2] [6 7 6 3 2] [6 7 6 4 0] [6 7 6 4 1] 
+Number of elements in the first row: 42
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip smart)
+Generated list: [6 7 6 4 2 1 7 7 0 4 6 5 2 7 6]
+Number of elements in the first row: 4895
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is prefix)
+Generated list: [4 0 1 4 8]
+First row: [] [4] [4 0] [4 0 1 4] [0 0 1 4 8] [1 0 1 4 8] [2 0 1 4 8] [3 0 1 4 8] [4 0 0 4 8] [4 0 1 0 8] [4 0 1 1 8] [4 0 1 2 8] [4 0 1 3 8] [4 0 1 4 0] [4 0 1 4 1] [4 0 1 4 2] [4 0 1 4 4] [4 0 1 4 7] 
+Number of elements in the first row: 18
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is prefix)
+Generated list: [4 0 1 4 8 1 4 7 7 1 8 6 8 8 5]
+Number of elements in the first row: 58
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is suffix)
+Generated list: [4 0 1 4 8]
+First row: [] [8] [4 8] [0 1 4 8] [0 0 1 4 8] [1 0 1 4 8] [2 0 1 4 8] [3 0 1 4 8] [4 0 0 4 8] [4 0 1 0 8] [4 0 1 1 8] [4 0 1 2 8] [4 0 1 3 8] [4 0 1 4 0] [4 0 1 4 1] [4 0 1 4 2] [4 0 1 4 4] [4 0 1 4 7] 
+Number of elements in the first row: 18
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is suffix)
+Generated list: [4 0 1 4 8 1 4 7 7 1 8 6 8 8 5]
+Number of elements in the first row: 58
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 0)
+Generated list: [4 0 1 4 8]
+First row: [] [4] [4 0] [4 0 1 4] [0 0 1 4 8] [1 0 1 4 8] [2 0 1 4 8] [3 0 1 4 8] [4 0 0 4 8] [4 0 1 0 8] [4 0 1 1 8] [4 0 1 2 8] [4 0 1 3 8] [4 0 1 4 0] [4 0 1 4 1] [4 0 1 4 2] [4 0 1 4 4] [4 0 1 4 7] 
+Number of elements in the first row: 18
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 0)
+Generated list: [4 0 1 4 8 1 4 7 7 1 8 6 8 8 5]
+Number of elements in the first row: 58
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 1)
+Generated list: [4 0 1 4 8]
+First row: [] [4] [0] [4 0] [4 1] [0 1] [4 0 1 4] [4 0 1 8] [4 0 4 8] [4 1 4 8] [0 1 4 8] [0 0 1 4 8] [1 0 1 4 8] [2 0 1 4 8] [3 0 1 4 8] [4 0 0 4 8] [4 0 1 0 8] [4 0 1 1 8] [4 0 1 2 8] [4 0 1 3 8] [4 0 1 4 0] [4 0 1 4 1] [4 0 1 4 2] [4 0 1 4 4] [4 0 1 4 7] 
+Number of elements in the first row: 25
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 1)
+Generated list: [4 0 1 4 8 1 4 7 7 1 8 6 8 8 5]
+Number of elements in the first row: 105
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 2)
+Generated list: [4 0 1 4 8]
+First row: [] [4] [0] [1] [4 0] [4 1] [4 4] [0 1] [0 4] [1 4] [4 0 1 4] [4 0 1 8] [4 0 4 8] [4 1 4 8] [0 1 4 8] [0 0 1 4 8] [1 0 1 4 8] [2 0 1 4 8] [3 0 1 4 8] [4 0 0 4 8] [4 0 1 0 8] [4 0 1 1 8] [4 0 1 2 8] [4 0 1 3 8] [4 0 1 4 0] [4 0 1 4 1] [4 0 1 4 2] [4 0 1 4 4] [4 0 1 4 7] 
+Number of elements in the first row: 29
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 2)
+Generated list: [4 0 1 4 8 1 4 7 7 1 8 6 8 8 5]
+Number of elements in the first row: 304
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip smart)
+Generated list: [4 0 1 4 8]
+First row: [] [4] [0] [1] [4] [8] [4 0] [4 1] [4 4] [4 8] [0 1] [0 4] [0 8] [1 4] [1 8] [4 8] [4 0 1 4] [4 0 1 8] [4 0 4 8] [4 1 4 8] [0 1 4 8] [0 0 1 4 8] [1 0 1 4 8] [2 0 1 4 8] [3 0 1 4 8] [4 0 0 4 8] [4 0 1 0 8] [4 0 1 1 8] [4 0 1 2 8] [4 0 1 3 8] [4 0 1 4 0] [4 0 1 4 1] [4 0 1 4 2] [4 0 1 4 4] [4 0 1 4 7] 
+Number of elements in the first row: 35
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip smart)
+Generated list: [4 0 1 4 8 1 4 7 7 1 8 6 8 8 5]
+Number of elements in the first row: 4892
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is prefix)
+Generated list: []
+First row: 
+Number of elements in the first row: 0
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is prefix)
+Generated list: [5 2 4 6 4 4 7 8 0 7]
+Number of elements in the first row: 38
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is suffix)
+Generated list: []
+First row: 
+Number of elements in the first row: 0
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is suffix)
+Generated list: [5 2 4 6 4 4 7 8 0 7]
+Number of elements in the first row: 38
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 0)
+Generated list: []
+First row: 
+Number of elements in the first row: 0
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 0)
+Generated list: [5 2 4 6 4 4 7 8 0 7]
+Number of elements in the first row: 38
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 1)
+Generated list: []
+First row: 
+Number of elements in the first row: 0
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 1)
+Generated list: [5 2 4 6 4 4 7 8 0 7]
+Number of elements in the first row: 38
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 2)
+Generated list: []
+First row: 
+Number of elements in the first row: 0
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 2)
+Generated list: [5 2 4 6 4 4 7 8 0 7]
+Number of elements in the first row: 38
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip smart)
+Generated list: []
+First row: 
+Number of elements in the first row: 0
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip smart)
+Generated list: [5 2 4 6 4 4 7 8 0 7]
+Number of elements in the first row: 38
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is prefix)
+Generated list: [1 8 3 2 2 7 6]
+First row: [] [1] [1 8] [1 8 3 2] [1 8 3 2 2 7] [0 8 3 2 2 7 6] [1 0 3 2 2 7 6] [1 1 3 2 2 7 6] [1 2 3 2 2 7 6] [1 4 3 2 2 7 6] [1 7 3 2 2 7 6] [1 8 0 2 2 7 6] [1 8 1 2 2 7 6] [1 8 2 2 2 7 6] [1 8 3 0 2 7 6] [1 8 3 1 2 7 6] [1 8 3 2 0 7 6] [1 8 3 2 1 7 6] [1 8 3 2 2 0 6] [1 8 3 2 2 1 6] [1 8 3 2 2 2 6] [1 8 3 2 2 4 6] [1 8 3 2 2 6 6] [1 8 3 2 2 7 0] [1 8 3 2 2 7 1] [1 8 3 2 2 7 2] [1 8 3 2 2 7 4] [1 8 3 2 2 7 5] 
+Number of elements in the first row: 28
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is prefix)
+Generated list: [1 8 3 2 2 7 6 8 1 0 0 5 7 7 7 6 7]
+Number of elements in the first row: 63
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is suffix)
+Generated list: [1 8 3 2 2 7 6]
+First row: [] [6] [7 6] [2 2 7 6] [8 3 2 2 7 6] [0 8 3 2 2 7 6] [1 0 3 2 2 7 6] [1 1 3 2 2 7 6] [1 2 3 2 2 7 6] [1 4 3 2 2 7 6] [1 7 3 2 2 7 6] [1 8 0 2 2 7 6] [1 8 1 2 2 7 6] [1 8 2 2 2 7 6] [1 8 3 0 2 7 6] [1 8 3 1 2 7 6] [1 8 3 2 0 7 6] [1 8 3 2 1 7 6] [1 8 3 2 2 0 6] [1 8 3 2 2 1 6] [1 8 3 2 2 2 6] [1 8 3 2 2 4 6] [1 8 3 2 2 6 6] [1 8 3 2 2 7 0] [1 8 3 2 2 7 1] [1 8 3 2 2 7 2] [1 8 3 2 2 7 4] [1 8 3 2 2 7 5] 
+Number of elements in the first row: 28
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is suffix)
+Generated list: [1 8 3 2 2 7 6 8 1 0 0 5 7 7 7 6 7]
+Number of elements in the first row: 63
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 0)
+Generated list: [1 8 3 2 2 7 6]
+First row: [] [1] [1 8] [1 8 3 2] [1 8 3 2 2 7] [0 8 3 2 2 7 6] [1 0 3 2 2 7 6] [1 1 3 2 2 7 6] [1 2 3 2 2 7 6] [1 4 3 2 2 7 6] [1 7 3 2 2 7 6] [1 8 0 2 2 7 6] [1 8 1 2 2 7 6] [1 8 2 2 2 7 6] [1 8 3 0 2 7 6] [1 8 3 1 2 7 6] [1 8 3 2 0 7 6] [1 8 3 2 1 7 6] [1 8 3 2 2 0 6] [1 8 3 2 2 1 6] [1 8 3 2 2 2 6] [1 8 3 2 2 4 6] [1 8 3 2 2 6 6] [1 8 3 2 2 7 0] [1 8 3 2 2 7 1] [1 8 3 2 2 7 2] [1 8 3 2 2 7 4] [1 8 3 2 2 7 5] 
+Number of elements in the first row: 28
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 0)
+Generated list: [1 8 3 2 2 7 6 8 1 0 0 5 7 7 7 6 7]
+Number of elements in the first row: 63
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 1)
+Generated list: [1 8 3 2 2 7 6]
+First row: [] [1] [8] [1 8] [1 3] [8 3] [1 8 3 2] [1 8 3 2] [1 8 2 2] [1 3 2 2] [8 3 2 2] [1 8 3 2 2 7] [1 8 3 2 2 6] [1 8 3 2 7 6] [1 8 3 2 7 6] [1 8 2 2 7 6] [1 3 2 2 7 6] [8 3 2 2 7 6] [0 8 3 2 2 7 6] [1 0 3 2 2 7 6] [1 1 3 2 2 7 6] [1 2 3 2 2 7 6] [1 4 3 2 2 7 6] [1 7 3 2 2 7 6] [1 8 0 2 2 7 6] [1 8 1 2 2 7 6] [1 8 2 2 2 7 6] [1 8 3 0 2 7 6] [1 8 3 1 2 7 6] [1 8 3 2 0 7 6] [1 8 3 2 1 7 6] [1 8 3 2 2 0 6] [1 8 3 2 2 1 6] [1 8 3 2 2 2 6] [1 8 3 2 2 4 6] [1 8 3 2 2 6 6] [1 8 3 2 2 7 0] [1 8 3 2 2 7 1] [1 8 3 2 2 7 2] [1 8 3 2 2 7 4] [1 8 3 2 2 7 5] 
+Number of elements in the first row: 41
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 1)
+Generated list: [1 8 3 2 2 7 6 8 1 0 0 5 7 7 7 6 7]
+Number of elements in the first row: 126
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip 2)
+Generated list: [1 8 3 2 2 7 6]
+First row: [] [1] [8] [3] [1 8] [1 3] [1 2] [8 3] [8 2] [3 2] [1 8 3 2] [1 8 3 2] [1 8 3 7] [1 8 2 2] [1 8 2 7] [1 8 2 7] [1 3 2 2] [1 3 2 7] [1 3 2 7] [1 2 2 7] [8 3 2 2] [8 3 2 7] [8 3 2 7] [8 2 2 7] [3 2 2 7] [1 8 3 2 2 7] [1 8 3 2 2 6] [1 8 3 2 7 6] [1 8 3 2 7 6] [1 8 2 2 7 6] [1 3 2 2 7 6] [8 3 2 2 7 6] [0 8 3 2 2 7 6] [1 0 3 2 2 7 6] [1 1 3 2 2 7 6] [1 2 3 2 2 7 6] [1 4 3 2 2 7 6] [1 7 3 2 2 7 6] [1 8 0 2 2 7 6] [1 8 1 2 2 7 6] [1 8 2 2 2 7 6] [1 8 3 0 2 7 6] [1 8 3 1 2 7 6] [1 8 3 2 0 7 6] [1 8 3 2 1 7 6] [1 8 3 2 2 0 6] [1 8 3 2 2 1 6] [1 8 3 2 2 2 6] [1 8 3 2 2 4 6] [1 8 3 2 2 6 6] [1 8 3 2 2 7 0] [1 8 3 2 2 7 1] [1 8 3 2 2 7 2] [1 8 3 2 2 7 4] [1 8 3 2 2 7 5] 
+Number of elements in the first row: 55
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip 2)
+Generated list: [1 8 3 2 2 7 6 8 1 0 0 5 7 7 7 6 7]
+Number of elements in the first row: 430
+
+Generate a random list of size between 0 and 20 and elements of size 0 and 8 (tactic is skip smart)
+Generated list: [1 8 3 2 2 7 6]
+First row: [] [1] [8] [3] [2] [2] [7] [6] [1 8] [1 3] [1 2] [1 2] [1 7] [1 6] [8 3] [8 2] [8 2] [8 7] [8 6] [3 2] [3 2] [3 7] [3 6] [2 2] [2 7] [2 6] [2 7] [2 6] [7 6] [1 8 3 2] [1 8 3 2] [1 8 3 7] [1 8 3 6] [1 8 2 2] [1 8 2 7] [1 8 2 6] [1 8 2 7] [1 8 2 6] [1 8 7 6] [1 3 2 2] [1 3 2 7] [1 3 2 6] [1 3 2 7] [1 3 2 6] [1 3 7 6] [1 2 2 7] [1 2 2 6] [1 2 7 6] [1 2 7 6] [8 3 2 2] [8 3 2 7] [8 3 2 6] [8 3 2 7] [8 3 2 6] [8 3 7 6] [8 2 2 7] [8 2 2 6] [8 2 7 6] [8 2 7 6] [3 2 2 7] [3 2 2 6] [3 2 7 6] [3 2 7 6] [2 2 7 6] [1 8 3 2 2 7] [1 8 3 2 2 6] [1 8 3 2 7 6] [1 8 3 2 7 6] [1 8 2 2 7 6] [1 3 2 2 7 6] [8 3 2 2 7 6] [0 8 3 2 2 7 6] [1 0 3 2 2 7 6] [1 1 3 2 2 7 6] [1 2 3 2 2 7 6] [1 4 3 2 2 7 6] [1 7 3 2 2 7 6] [1 8 0 2 2 7 6] [1 8 1 2 2 7 6] [1 8 2 2 2 7 6] [1 8 3 0 2 7 6] [1 8 3 1 2 7 6] [1 8 3 2 0 7 6] [1 8 3 2 1 7 6] [1 8 3 2 2 0 6] [1 8 3 2 2 1 6] [1 8 3 2 2 2 6] [1 8 3 2 2 4 6] [1 8 3 2 2 6 6] [1 8 3 2 2 7 0] [1 8 3 2 2 7 1] [1 8 3 2 2 7 2] [1 8 3 2 2 7 4] [1 8 3 2 2 7 5] 
+Number of elements in the first row: 94
+
+Generate a random list of size between 0 and 50 and elements of size 0 and 8 (shrink is skip smart)
+Generated list: [1 8 3 2 2 7 6 8 1 0 0 5 7 7 7 6 7]
+Number of elements in the first row: 38767
+

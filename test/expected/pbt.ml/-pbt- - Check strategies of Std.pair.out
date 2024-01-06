@@ -1,0 +1,35 @@
+Predicate: not null
+left: 989
+right: 0
+compare sum: 516
+left | crunch: 989
+right | crunch: 0
+compare sum | crunch: 516
+Predicate: modulo
+left: 911
+right: 0
+compare sum: 500
+left | crunch: 826
+right | crunch: 85
+compare sum | crunch: 454
+Predicate: difference must not be zero
+left: 0
+right: 0
+compare sum: 0
+left | crunch: 11
+right | crunch: 11
+compare sum | crunch: 11
+Predicate: difference must not be small
+left: 6
+right: 0
+compare sum: 4
+left | crunch: 71
+right | crunch: 1
+compare sum | crunch: 8
+Predicate: difference must not be one
+left: 0
+right: 0
+compare sum: 0
+left | crunch: 16
+right | crunch: 0
+compare sum | crunch: 3

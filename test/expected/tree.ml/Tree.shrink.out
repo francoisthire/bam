@@ -1,0 +1,39 @@
+Tree.binary_search ~initial:100 ~origin:Z.zero ()
+Property a
+Tree.shrink: 100 (crunch 1)
+Tree.shrink: 100 (crunch 2)
+Tree.shrink: 100 (crunch 5)
+Property b
+Tree.shrink: 100 (crunch 1)
+Tree.shrink: 100 (crunch 2)
+Tree.shrink: 100 (crunch 5)
+Property c
+Tree.shrink: 100 (crunch 1)
+Tree.shrink: 100 (crunch 2)
+Tree.shrink: 100 (crunch 5)
+Tree.binary_search ~initial:2100 ~origin:Z.zero ()
+Property a
+Tree.shrink: 1023 (crunch 1)
+Tree.shrink: 1023 (crunch 2)
+Tree.shrink: 1002 (crunch 5)
+Property b
+Tree.shrink: 1029 (crunch 1)
+Tree.shrink: 1022 (crunch 2)
+Tree.shrink: 1001 (crunch 5)
+Property c
+Tree.shrink: 2100 (crunch 1)
+Tree.shrink: 2100 (crunch 2)
+Tree.shrink: 1321 (crunch 5)
+Tree.binary_search ~initial:4200 ~origin:Z.zero ()
+Property a
+Tree.shrink: 1023 (crunch 1)
+Tree.shrink: 1023 (crunch 2)
+Tree.shrink: 1002 (crunch 5)
+Property b
+Tree.shrink: 1029 (crunch 1)
+Tree.shrink: 1022 (crunch 2)
+Tree.shrink: 1001 (crunch 5)
+Property c
+Tree.shrink: 4200 (crunch 1)
+Tree.shrink: 4200 (crunch 2)
+Tree.shrink: 1321 (crunch 5)
