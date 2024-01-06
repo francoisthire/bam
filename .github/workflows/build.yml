@@ -1,0 +1,49 @@
+name: build
+run-name: Build Bam
+on: [push]
+
+# Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+permissions:
+  contents: write
+  
+jobs:
+  build_matrix:
+    runs-on: ubuntu-latest    
+    strategy:
+      matrix:
+        ocaml-compiler: [
+            # OCaml LTS version
+            ocaml.4.14.1,
+            # ocaml-system for Fedora 39
+            ocaml.5.0.0,
+            # ocaml-system for Archlinux
+            ocaml.5.1.0
+          ]
+    steps:
+      - uses: actions/checkout@v4
+      - name: setting up opam...
+        uses: ocaml/setup-ocaml@v2
+        with:
+          ocaml-compiler: ${{ matrix.ocaml-compiler }}
+      - name: Install dependencies
+        run: |
+          opam update
+          opam upgrade
+          opam install . --deps-only -t
+      - name: Build Bam
+        run: |
+          eval $(opam env)
+          dune build .
+      - name: Test
+        run: |
+          eval $(opam env)
+          dune exec test/main.exe -- --keep-going
+      - name: Build documentation
+        run: |
+          eval $(opam env)
+          opam install odoc
+          dune build @doc
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _build/default/_doc/_html

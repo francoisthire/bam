@@ -1,0 +1,7 @@
+(library
+ (name bam)
+ (public_name bam)
+ (libraries pringo zarith))
+
+(documentation
+ (package bam))
