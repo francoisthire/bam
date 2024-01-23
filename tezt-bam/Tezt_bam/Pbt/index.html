@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Pbt (tezt-bam.Tezt_bam.Pbt)</title><meta charset="utf-8"/><link rel="stylesheet" href="../../../odoc.support/odoc.css"/><meta name="generator" content="odoc 2.4.0"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><script src="../../../odoc.support/highlight.pack.js"></script><script>hljs.initHighlightingOnLoad();</script></head><body class="odoc"><nav class="odoc-nav"><a href="../index.html">Up</a> – <a href="../../index.html">tezt-bam</a> &#x00BB; <a href="../index.html">Tezt_bam</a> &#x00BB; Pbt</nav><header class="odoc-preamble"><h1>Module <code><span>Tezt_bam.Pbt</span></code></h1><p>This module declares a unique function to register a new test within Tezt. A typical way of using this function is as follows:</p><pre class="language-ocaml"><code>type t = A | B | C
+
+let my_test =
+let gen =
+let open Std.Syntax in
+  let gen =
+    let* i = Std.int ~max:3 () in
+    (if i = 0 then A else if i = 1 then B else C) |&gt; return
+  in
+  Std.list ~size:(Std.int ~max:10 ()) gen
+in
+let property l =
+  List.length l &lt; 5 &amp;&amp; List.mem A l
+in
+Pbt.register ~__FILE__ ~title:&quot;Simple test&quot; ~tags:[&quot;pbt&quot;;&quot;simple&quot;] ~gen ~property ()</code></pre><p>Running this example with Tezt would give:</p><pre class="language-ocaml"><code>[18:06:14.776] [pbt] Please run the test again with option --shrink to get a minimal example.
+[18:06:14.776] [pbt] Counter example found:
+[18:06:14.776] [pbt] C B B C A C
+[18:06:14.776] [pbt] Error:
+[18:06:14.776] [pbt] Counter-example was found
+[18:06:14.776] [pbt] Runtime statistics (before shrinking):
+[18:06:14.776] [pbt] Execution time: 1.28ms
+[18:06:14.776] [pbt] Minimum execution time: 737ns
+[18:06:14.776] [pbt] Maximum execution time: 1.25ms
+[18:06:14.776] [pbt] Average execution time: 255μs
+[18:06:14.776] [pbt] Number of executions (without shrinking): 5
+[18:06:14.776] [pbt] Number of distinct samples (not producing 'Bad_value' error): 5
+[18:06:14.776] [pbt] sampling ratio: 1.000000
+[18:06:14.776] [pbt] Running property on the smaller counter example found...
+[18:06:14.776] [pbt] Total execution time: 1.35ms
+[18:06:14.776] [error] Test failed with error:
+[18:06:14.776] [error] Counter-example was found
+[18:06:14.776] [FAILURE] (1/1, 1 failed) Simple test
+[18:06:14.776] Try again with: _build/default/test/main.exe --verbose --file test/pbt.ml --title 'Simple test' --seed 227649358</code></pre><p>Following the suggestion provided, if we run the same test with option <code>--shrink</code> and option <code>--seed 227649358</code> to get the same counter-example we get this time:</p><pre class="language-ocaml"><code>[18:06:37.025] Starting test: Simple test
+[18:06:37.025] [pbt] Start searching for a counter example...
+[18:06:37.026] [pbt] Counter example found:
+[18:06:37.026] [pbt] C B B C A C
+[18:06:37.026] [pbt] Error:
+[18:06:37.026] [pbt] Counter-example was found
+[18:06:37.026] [pbt] Runtime statistics (before shrinking):
+[18:06:37.026] [pbt] Execution time: 1.97ms
+[18:06:37.026] [pbt] Minimum execution time: 1.75μs
+[18:06:37.026] [pbt] Maximum execution time: 1.93ms
+[18:06:37.026] [pbt] Average execution time: 394μs
+[18:06:37.026] [pbt] Number of executions (without shrinking): 5
+[18:06:37.026] [pbt] Number of distinct samples (not producing 'Bad_value' error): 5
+[18:06:37.026] [pbt] sampling ratio: 1.000000
+[18:06:37.026] [pbt] Start shrinking...
+[18:06:37.027] [pbt] Smaller counter example found:
+[18:06:37.027] [pbt] B B
+[18:06:37.027] [pbt] Running property on the smaller counter example found...
+[18:06:37.027] [pbt] Total execution time: 2.13ms
+[18:06:37.027] [error] Test failed with error:
+[18:06:37.027] [error] Counter-example was found
+[18:06:37.027] [FAILURE] (1/1, 1 failed) Simple test
+[18:06:37.027] Try again with: _build/default/test/main.exe --verbose --file test/pbt.ml --title 'Simple test' --seed 227649358</code></pre><p>The framework did not find the smalletest counter-example. We can make the default shrinking strategy more aggressive. For example by changing the generator as dollows:</p><pre class="language-ocaml"><code>let gen =
+  let open Std.Syntax in
+  let gen =
+    let* i = Std.int ~max:3 () in
+    (if i = 0 then A else if i = 1 then B else C) |&gt; return
+  in
+  Std.list ~shrinker:(Skip `Auto) ~size:(Std.int ~max:10 ()) gen</code></pre><p>Please, refers to <a href="../../../bam/Bam/Std/Shrinker/index.html#type-t.Skip"><code>Bam.Std.Shrinker.t.Skip</code></a> for more detailed explanations.</p></header><div class="odoc-content"><div class="odoc-spec"><div class="spec value anchored" id="val-register"><a href="#val-register" class="anchor"></a><code><span><span class="keyword">val</span> register : 
+  <span><span class="optlabel">?hash</span>:<span>(<span><span class="type-var">'a</span> <span class="arrow">&#45;&gt;</span></span> int)</span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="optlabel">?pp</span>:<span>(<span><span class="xref-unresolved">Stdlib</span>.Format.formatter <span class="arrow">&#45;&gt;</span></span> <span><span class="type-var">'a</span> <span class="arrow">&#45;&gt;</span></span> unit)</span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="optlabel">?expected_sampling_ratio</span>:float <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="optlabel">?minimum_number_of_samples</span>:int <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="optlabel">?regression</span>:<span><span class="type-var">'a</span> list</span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="optlabel">?stop_after</span>:<span>[ <span>`Timeout of float</span> <span><span>| `Count</span> of int</span> <span>| `Loop</span> ]</span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="optlabel">?on_sample</span>:<span>(<span><span class="type-var">'a</span> <span class="arrow">&#45;&gt;</span></span> unit)</span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="label">__FILE__</span>:string <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="label">title</span>:string <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="label">tags</span>:<span>string list</span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="label">gen</span>:<span><span class="type-var">'a</span> <a href="../../../bam/Bam/Gen/index.html#type-t">Gen.t</a></span> <span class="arrow">&#45;&gt;</span></span>
+  <span><span class="label">property</span>:<span>(<span><span class="type-var">'a</span> <span class="arrow">&#45;&gt;</span></span> <span><span>(<span class="type-var">'b</span>, <span>[ <span>`Fail of string</span> <span>| `Bad_value</span> ]</span>)</span> <span class="xref-unresolved">Stdlib</span>.Result.t</span>)</span> <span class="arrow">&#45;&gt;</span></span>
+  <span>unit <span class="arrow">&#45;&gt;</span></span>
+  unit</span></code></div><div class="spec-doc"><p><code>register ?hash ?pp ?expected_sampling_ratio
+    ?minimum_number_of_samples ?regression ?stop_after ?on_sample gen property</code> runs the <code>property</code> on random values generated with <code>gen</code>.</p><p>The property is run on as many samples as possible depending on <code>stop_after</code>. <code>gen</code> is called any time a new simple must be provided.</p><p>The seed used to generate samples is controlled by Tezt (see <a href="../Test/index.html#val-register"><code>Test.register</code></a>). This function ensures that if the test is run twice with the same seed, then the same values will be generated.</p><p>The <code>property</code> will be called on each generated sample produced by <code>gen</code>. It does so in an environment where the output on both <code>stdout</code> and <code>stderr</code> is captured by default. Except for the counter-example found for which, <code>property</code> is run again without capturing anything. This behaviour should ease the debugging (especially hello debugging).</p><p>The test can fail in the following cases:</p><p>1) A counter example was found</p><p>2) The last run with the counter example succeeded</p><p>3) Not enough samples were generated</p><p>The first case is expected. The reason for the second case, is likely related to non-determinism of the property since the test was run twice with the same generated value. For the third case, this is to ensure the property is run on many samples as detailed below.</p><p>One issue with proerty-based testing is that it is not easy to ensure that the generator and the property are run an a large range of values. The default behaviour of this register function is to prevent such a case to occur. To do so, two parameters are used: <code>expected_sampling_ratio</code> and<code>minimum_number_of_samples</code>.</p><p><code>expected_sampling_ratio</code> (by default 0.10) ensures that the generator generates in general different sample.</p><p><code>minimum_number_of_samples</code> (by default 50) ensures that the property is run at least that numbero f times.</p><p>Those default values should ensure that it is not a constraint most of the times, while at the same time should capture erronenous cases.</p><p><code>stop_after</code> allows to determine how many samples should be drawn to run the property on. By default it is set to <code>`Timeout 0.10</code>, meaning that the test will stop after 100ms. It can be set to <code>`Count n</code> to decide a precise number of times the test should be run. Do note that the default value depends on the CLI arguments provided by the user. If <code>--loop</code> was set, then the default value is <code>`Loop</code>. While if <code>`--loop-count n</code> was set with <code>n &gt; 1</code>, the default value will be <code>`Count n</code>.</p><p><code>on_sample</code> is called any time a new value is generated.</p><p>If <code>pp</code> is provided, it can be used to print the counter-example found.</p><p>If <code>hash</code> is provided, it will be used to <code>hash</code> values. This function is used to count the number of distinct samples.</p><p><code>regression</code> can be instantiated to be sure that some fixed deterministic examples is always run.</p><p>This function can be influenced with two options from the command-line:</p><ul><li><code>--shrink</code> triggers the shrinker to find a smaller counter-example. An explanation about shrinking can be found in the documentation of the package <code>Bam</code>.</li></ul><ul><li><code>--no-capture</code> so that output is not captured</li></ul></div></div></div></body></html>
