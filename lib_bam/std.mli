@@ -118,7 +118,7 @@ val crunch : int -> 'a t -> 'a t
 
 val int : ?shrinker:int Shrinker.t -> ?min:int -> ?max:int -> unit -> int t
 (** [int ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
-    integers. [min] is inclusive while [max] is exclusive.
+    integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Int}[0].
  *)
@@ -126,7 +126,7 @@ val int : ?shrinker:int Shrinker.t -> ?min:int -> ?max:int -> unit -> int t
 val int32 :
   ?shrinker:int32 Shrinker.t -> ?min:int32 -> ?max:int32 -> unit -> int32 t
 (** [int ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
-    integers. [min] is inclusive while [max] is exclusive.
+    integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Int}[0].
  *)
@@ -134,7 +134,7 @@ val int32 :
 val int64 :
   ?shrinker:int64 Shrinker.t -> ?min:int64 -> ?max:int64 -> unit -> int64 t
 (** [int ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
-    integers. [min] is inclusive while [max] is exclusive.
+    integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Int}[0].
  *)
@@ -142,7 +142,7 @@ val int64 :
 val float :
   ?shrinker:float Shrinker.t -> ?min:float -> ?max:float -> unit -> float t
 (** [float ?shrinker ?(min=0.) ?(max=Float.max_float) ()] generates
-    integers. [min] is inclusive while [max] is exclusive.
+    integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Float}[0.].
  *)
