@@ -264,7 +264,7 @@ let oneof : ?shrinker:int Shrinker.t -> (int * 'a Gen.t) list -> 'a Gen.t =
       | Some gen ->
           (acc, Some gen)
       | None ->
-          if i <= acc then (acc, Some gen) else (acc + weight, None) )
+          if i < acc + weight then (acc, Some gen) else (acc + weight, None) )
     (0, None) weighted_list
   |> snd
   |> function None -> assert false | Some gen -> gen
