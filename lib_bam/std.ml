@@ -257,7 +257,7 @@ let oneof : ?shrinker:int Shrinker.t -> (int * 'a Gen.t) list -> 'a Gen.t =
     raise
     @@ invalid_arg
          "[Std.oneof] was called with a weighted_list whose weights sum is 0." ;
-  let* i = int ?shrinker ~min:0 ~max:total () in
+  let* i = int ?shrinker ~min:0 ~max:(total - 1) () in
   List.fold_left
     (fun (acc, gen') (weight, gen) ->
       match gen' with
