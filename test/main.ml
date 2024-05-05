@@ -5,4 +5,5 @@ let () =
   Gen.register () ;
   Std.register () ;
   Pbt.register () ;
+  Ppx.register () ;
   Test.run ()
