@@ -1,0 +1,10 @@
+(library
+ (name bam_ppx)
+ (public_name bam-ppx)
+ (kind ppx_deriver)
+ (libraries ppxlib dmap)
+ (preprocess
+  (pps ppxlib.metaquot)))
+
+(documentation
+ (package bam))

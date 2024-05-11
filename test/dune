@@ -1,4 +1,6 @@
 (test
  (name main)
- (libraries tezt-bam)
+ (libraries tezt-bam bam-ppx)
+ (preprocess
+  (pps bam_ppx))
  (package tezt-bam))

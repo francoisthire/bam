@@ -7,9 +7,9 @@
 (source
  (github francoisthire/bam))
 
-(authors "François Thiré")
+(authors "Fran\195\167ois Thir\195\169")
 
-(maintainers "François Thiré")
+(maintainers "Fran\195\167ois Thir\195\169")
 
 (license MIT)
 
@@ -18,18 +18,50 @@
 (package
  (name bam)
  (synopsis "A property-based testing library with internal shrinking")
- (description "A property-based testing allowing to define generators with internal shrinking easily")
- (depends (ocaml (>= 4.14)) (dune (>= 3.7)) pringo (zarith (>= 1.13)) (odoc :with-doc) (tezt :with-test))
+ (description
+  "A property-based testing allowing to define generators with internal shrinking easily")
+ (depends
+  (ocaml
+   (>= 4.14))
+  (dune
+   (>= 3.7))
+  pringo
+  (zarith
+   (>= 1.13))
+  (odoc :with-doc)
+  (tezt :with-test))
  (tags
   (test pbt shrinking internal)))
+
+(package
+ (name bam-ppx)
+ (synopsis "A PPX deriving generators for OCaml types")
+ (description
+  "Provides a way to automatically get generators for a given type")
+ (depends
+  ocaml
+  dune
+  (ppxlib
+   (<= 0.32.0))
+  (dmap
+   (>= 0.5))
+  (odoc :with-doc))
+ (tags
+  (test pbt shrinking internal bam ppx)))
 
 (package
  (name tezt-bam)
  (synopsis "A plugin of [bam] for Tezt")
  (description "Provides a way to register PBT tests with Tezt")
- (depends ocaml dune tezt bam (mtime (>= 2.0)) (odoc :with-doc))
+ (depends
+  ocaml
+  dune
+  tezt
+  bam
+  (mtime
+   (>= 2.0))
+  (odoc :with-doc))
  (tags
   (test tezt pbt shrinking internal bam)))
-
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
