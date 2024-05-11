@@ -1,0 +1,5 @@
+(library
+ (name deriving_generators)
+ (preprocess
+  (pps bam_ppx))
+ (libraries tezt-bam bam-ppx))

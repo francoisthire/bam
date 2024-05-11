@@ -5,4 +5,5 @@ let () =
   Simple_failure.register () ;
   Debugging.register () ;
   Writing_generators.register () ;
+  Deriving_generators.register () ;
   Test.run ()
