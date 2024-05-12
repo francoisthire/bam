@@ -16,7 +16,7 @@ depends: [
   "pringo"
   "zarith" {>= "1.13"}
   "odoc" {with-doc}
-  "tezt" {with-test}
+  "tezt" {>= "4.0" & with-test}
 ]
 build: [
   ["dune" "subst"] {dev}

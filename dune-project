@@ -29,7 +29,10 @@
   (zarith
    (>= 1.13))
   (odoc :with-doc)
-  (tezt :with-test))
+  (tezt
+   (and
+    (>= 4.0)
+    :with-test)))
  (tags
   (test pbt shrinking internal)))
 
@@ -39,10 +42,14 @@
  (description
   "Provides a way to automatically get generators for a given type")
  (depends
-  ocaml
-  dune
+  (ocaml
+   (and
+    (>= 4.14)
+    (< 5.2)))
+  (dune
+   (>= 3.7))
   (ppxlib
-   (<= 0.32.0))
+   (>= 0.32.0))
   (dmap
    (>= 0.5))
   (odoc :with-doc))
@@ -55,9 +62,12 @@
  (description "Provides a way to register PBT tests with Tezt")
  (depends
   ocaml
-  dune
-  tezt
+  (dune
+   (>= 3.7))
+  (tezt
+   (>= 4.0))
   bam
+  bam-ppx
   (mtime
    (>= 2.0))
   (odoc :with-doc))
