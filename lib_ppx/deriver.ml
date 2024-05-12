@@ -60,6 +60,7 @@ and derive_tuple env tuple from =
     tuple |> List.mapi (fun i _label_declaration -> "arg_" ^ string_of_int i)
   in
   let gens = List.map (derive_core_type env) tuple in
+  env.runtime.use_monadic_syntax := true ;
   let base =
     vars
     |> List.map (fun name -> Ast_builder.Default.evar ~loc name)
@@ -122,6 +123,7 @@ let derive_label_declaration env label_declaration =
       gen
 
 let derive_record env record from =
+  env.runtime.use_monadic_syntax := true ;
   let base =
     record
     |> List.map (fun label_declaration ->
@@ -212,6 +214,7 @@ let derive_variant env constructors =
         base names constructors_expr
 
 let derive_type_declaration env type_declaration =
+  env.runtime.use_monadic_syntax := false ;
   let type_declaration, runtime =
     Attributes.Type_declaration.update type_declaration env.runtime
   in
@@ -252,9 +255,16 @@ let derive_type_declaration env type_declaration =
         if show_expected_type then [%expr ([%e body] : [%t expected_type])]
         else body
       in
-      List.fold_left
-        (fun expr ident -> [%expr fun [%p ident] -> [%e expr]])
-        base (List.rev params)
+      let gen_expr =
+        List.fold_left
+          (fun expr ident -> [%expr fun [%p ident] -> [%e expr]])
+          base (List.rev params)
+      in
+      if !(env.runtime.use_monadic_syntax) then
+        [%expr
+          let open Bam.Std.Syntax in
+          [%e gen_expr]]
+      else gen_expr
 
 let derive_type_declarations rec_flag type_declarations :
     Ast.structure_item list =

@@ -1,6 +1,6 @@
 Changelog for Bam library
 
-- #2: Add a PPX for Bam derving generators from a type or a module type
+- #2,#5: Add a PPX for Bam derving generators from a type or a module type
 
 - #1: Fix the `Bam.Std.oneof` generator 
 

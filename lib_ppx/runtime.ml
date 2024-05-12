@@ -91,7 +91,7 @@ let pretty_apply f a =
       let [%p pvar] = [%e a] in
       [%e f evar]]
 
-let get_default (type a) limits : a Ty.t -> a = function
+let get_default (type a) ~use_monadic_syntax limits : a Ty.t -> a = function
   | Unit ->
       Default.unit
   | Bool ->
@@ -125,12 +125,15 @@ let get_default (type a) limits : a Ty.t -> a = function
   | Sized Array ->
       let size_min = Limits.sized_min limits (E Array) in
       let size_max = Limits.sized_max limits (E Array) in
+      use_monadic_syntax := true ;
       pretty_apply (Default.array ~size_min ~size_max)
   | Sized Seq ->
       let size_min = Limits.sized_min limits (E Seq) in
       let size_max = Limits.sized_max limits (E Seq) in
+      use_monadic_syntax := true ;
       pretty_apply (Default.seq ~size_min ~size_max)
   | Option ->
+      use_monadic_syntax := true ;
       pretty_apply Default.option
   | Any ->
       failwith "The 'gen' deriver  could not handle this case"
@@ -139,20 +142,25 @@ type t =
   { limits: Limits.t
   ; override: expression Ty.Map.t
   ; gen: expression option
-  ; weight: int option }
+  ; weight: int option
+  ; use_monadic_syntax: bool ref }
 
 let default =
-  {limits= Limits.default; override= Ty.Map.empty; gen= None; weight= None}
+  { limits= Limits.default
+  ; override= Ty.Map.empty
+  ; gen= None
+  ; weight= None
+  ; use_monadic_syntax= ref false }
 
-let get (type a) t : a Ty.t -> a =
+let get (type a) {limits; override; use_monadic_syntax; gen; _} : a Ty.t -> a =
  fun ty ->
   (* A generator can be overrided twice. Either by specifying a default override
      for a given type, or locally by specifying a generator at the definition
      point. The last one has a higher priority. *)
   let override =
-    match t.gen with
+    match gen with
     | None -> (
-      match Ty.Map.find_opt (E ty) t.override with
+      match Ty.Map.find_opt (E ty) override with
       | None ->
           None
       | Some gen ->
@@ -162,7 +170,7 @@ let get (type a) t : a Ty.t -> a =
   in
   match override with
   | None ->
-      get_default t.limits ty
+      get_default ~use_monadic_syntax limits ty
   | Some gen -> (
     match ty with
     | Unit ->

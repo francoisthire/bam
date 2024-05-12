@@ -4,9 +4,9 @@ One can take advantage of the `bam-ppx` library to derive automatically generato
 
 ```ocaml
 open Tezt_bam
-open Bam.Std.Syntax
 
-type t = A of {x: int; b: bool} | B of string [@@deriving gen] [@@size.min 1][@@size.max 10]
+type t = A of {x: int; b: bool} | B of string
+[@@deriving gen] [@@size.min 1] [@@size.max 10]
 
 let pp fmt = function
   | A {x; b} ->
@@ -26,7 +26,7 @@ let register () =
     ~tags:["bam"; "deriving_generators"]
     ~gen ~property ()
 ```
-The attribute `[@@deriving gen]` derives automatically a generator for the type attached. The derived generator can be tuned via multiple options. To mimic the example showed in the previous example, we have specified that the minimum size and the maximum size that should be used are `1` and `10`.
+The attribute `[@@deriving gen]` derives automatically a generator for the type attached. The generator derived with `gen` can be tuned via other `attributes` as shown in the example above. In this example, we have specified that the minimum size and the maximum size that should be used are `1` and `10`.
 
 And now if your un it:
 
