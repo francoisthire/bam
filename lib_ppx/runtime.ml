@@ -199,7 +199,7 @@ let get_default (type a) ~use_monadic_syntax shrinker limits : a Ty.t -> a =
       use_monadic_syntax := true ;
       pretty_apply (Default.option ~shrinker)
   | Any ->
-      failwith "The 'gen' deriver  could not handle this case"
+      [%expr failwith "The 'gen' deriver  could not handle this case"]
 
 type t =
   { limits: Limits.t
