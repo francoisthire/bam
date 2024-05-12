@@ -6,4 +6,5 @@
   simple_failure
   writing_generators
   deriving_generators
+  shrinking_strategy
   debugging))

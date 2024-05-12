@@ -33,14 +33,11 @@ dune exec example/main.exe -- simple_failure
 [15:30:55.229] Try again with: _build/default/example/main.exe --verbose --file example/2-simple-failure/simple_failure.ml --title 'Simple failure example with bam' --seed 555586205
 ```
 
-This time `Tezt` is more verbose. On a failure, the counter-example
-found is printed. By default, shrinking is not enabled, hence the
-counter-example found can be rather big.
+This time `Tezt` is more verbose. On a failure, the counter-example found is
+printed. By default, shrinking is not enabled, hence the counter-example found
+can be rather big and quite complex to use for debugging.
 
-Moreover, the error raised associated to the counter-example is
-printed.
-
-If you want to run this example again using the shrinking of bam, you can use the option `--shrink`. To be sue the very same initial counter-example will be printed, you can use the seed given by Tezt:
+If you want to run this example again using the shrinking of *Bam*, you can use the option `--shrink`. To be sure the very same initial counter-example will be printed, you can use the seed given by Tezt:
 
 ```ocaml
 $ dune exec example/main.exe -- simple_failure --shrink --seed 555586205
@@ -57,9 +54,10 @@ $ dune exec example/main.exe -- simple_failure --shrink --seed 555586205
 
 At this stage, we see the shrinking heuristic allowed us to find a
 smaller-counter example which is `100`. Such a counter-example can be
-a good candidate for starting debugging the test.
+a good candidate when debugging the test.
+
 
 **Next steps:**
 - The next example
-  [3-debugging](https://github.com/francoisthire/bam/tree/master/example/3-debugging)
-  will investigate how bam can help for debugging
+  [3-writing-generators](https://github.com/francoisthire/bam/tree/master/example/3-writing-generators)
+  will explain how the monadic interface of *bam* is useful to write generators easily.

@@ -1,0 +1,5 @@
+(library
+ (name shrinking_strategy)
+ (preprocess
+  (pps bam_ppx))
+ (libraries tezt-bam bam-ppx))

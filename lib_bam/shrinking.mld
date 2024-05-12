@@ -1,12 +1,11 @@
 {1:shrinking A primer on shrinking}
 
-Shrinking is an integral part of the [Bam] library, focused on
-enhancing the generation of counter-examples. While the standard
-library aims to produce adequate counter-examples, it may encounter
-limitations with complex generators. Understanding the mechanisms of
-shrinking in [Bam] is crucial for developing effective shrinking
-strategies. This documentation provides insights into these
-mechanisms.
+Shrinking is an integral part of the [Bam] library, focused on enhancing the
+generation of counterexamples. While the standard library aims to produce
+adequate counterexamples, it may encounter limitations with more complex
+generators. Understanding the mechanisms of shrinking in [Bam] is crucial for
+using and developing effective shrinking strategies. This documentation provides
+insights into these mechanisms.
 
 The functions {!val:Bam.Std.bind} and {!val:Bam.Std.crunch} are
 examples of function within [Bam] that facilitate the shrinking
@@ -20,7 +19,7 @@ use the following data-type:
 type 'a t = unit -> 'a Tree.t
 ]}
 
-n this structure, the root of the tree represents the original
+In this structure, the root of the tree represents the original
 generated value, and the child nodes contain smaller values for the
 shrinker to use in the process of shrinking.
 
@@ -35,7 +34,7 @@ type 'a tree =
 ]}
 
 This definition uses a sequence [Seq.t] to manage the values for
-shrinking, allowing these values to be loaded only when needed. This
+shrinking, allowing these values to be computed only when needed. This
 approach implies that the branching factor of the tree is
 unbounded. Library-defined generators are designed to prevent
 excessive branching, ensuring that the shrinking process remains
@@ -71,13 +70,16 @@ let rec bind tree f =
    children = Seq.append root_tree.children children_trees}
 ]}
 
-The function's comment highlights a decision point: the method used to
-combine two sequences of trees, [root_tree.children] and
-[children_trees]. While [Seq.append] is a straightforward option, the
-possibility of employing alternative strategies exists. The library's
-merge-related functions facilitate the definition of custom methods
-for combining these child sequences.
-
+The function's comment highlights a decision point: the method used to combine
+two sequences of trees, [root_tree.children] and [children_trees]. While
+[Seq.append] is a straightforward option, the possibility of employing
+alternative strategies exists. The library's merge-related functions facilitate
+the definition of custom methods for combining these child sequences. One
+example where this strategy has an effect is in the shrinker for pairs
+(2-tuples). The described strategy initially shrinks the left component and then
+the right component. If we invert the order of the arguments given to
+[Seq.append], it would first shrink the right component and then the left
+component.
 
 With the definition of the bind function for trees established, the
 next step is to implement the bind function for generators:
@@ -107,9 +109,10 @@ let gen_int : max:int = fun () ->
   {root;children}
 ]}
 
-However, this approach proves to be highly inefficient for larger
-integer values. [Bam] generators use a more efficient method using
-dichotomy as illustrated in [Tree.binary_search].
+Do note that this generator is naive because the shrinking approach is not
+efficient and proves to be highly inefficient for larger integer values. [Bam]
+generators use a more efficient method using dichotomy as illustrated in
+[Tree.binary_search].
 
 {2 A side-effect issue}
 
@@ -123,15 +126,14 @@ let gen_pair () =
       return (x,y)))
 ]}
 
-For instance, this generator might yield a root value like
-(3,5). However, the children values produced can be unexpected, such
-as [(2,15)], [(1,7)], [(0,4)], [(2,19)], ... and so on. These values
-reveal that while the first component of the tree shows decreasing
-values, the second component does not follow this pattern. The
-underlying reason is that the bind function for the tree applies the
-function f to the smaller values of the first tree (created by
-[gen_int ~max:10 ()]). Each time f is called, it invokes [gen_int
-~max:20 ()], generating new values for the second component.
+For instance, this generator might yield a root value like (3,5). However, the
+children values produced can be unexpected, such as [(2,15)], [(1,7)], [(0,4)],
+[(2,19)], ... and so on. These values reveal that while the first component of
+the tree shows decreasing values, the second component does not follow this
+pattern. The underlying reason is that the bind function for the tree applies
+the function f to the smaller values of the first tree (created by [gen_int
+~max:10 ()]). Each time [f] is called, it invokes [gen_int ~max:20 ()],
+generating new values for the second component.
 
 This issue is well-known in the context of generators, leading
 some libraries to advise against using bind for such scenarios. An
@@ -192,6 +194,7 @@ These changes ensure that the generation process remains pure, with
 side effects being explicitly managed through the use of distinct
 random states.
 
+This primer is incomplete and will be completed in the future.
 
 
   

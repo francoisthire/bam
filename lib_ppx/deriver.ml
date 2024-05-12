@@ -274,7 +274,6 @@ let derive_type_declaration env type_declaration =
 
 let derive_type_declarations rec_flag type_declarations :
     Ast.structure_item list =
-  let loc = !Ast_helper.default_loc in
   let is_recursive = really_recursive rec_flag type_declarations in
   let env =
     { recursive_types=
@@ -304,16 +303,18 @@ let derive_type_declarations rec_flag type_declarations :
   in
   Ast_builder.Default.pstr_value_list ~loc is_recursive bindings
 
-let derive_str_signature_item = function
+let derive_str_signature_item loc = function
   | Psig_type (rec_flag, type_declarations) ->
-      derive_type_declarations rec_flag type_declarations
+      {pstr_desc= Pstr_type (rec_flag, type_declarations); pstr_loc= loc}
+      :: derive_type_declarations rec_flag type_declarations
   | _ ->
       []
 
 let derive_str_signature signature =
   signature
   |> List.map (fun signature_item ->
-         derive_str_signature_item signature_item.psig_desc )
+         derive_str_signature_item signature_item.psig_loc
+           signature_item.psig_desc )
   |> List.concat
 
 let derive_str_module_type = function

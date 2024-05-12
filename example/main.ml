@@ -6,4 +6,5 @@ let () =
   Debugging.register () ;
   Writing_generators.register () ;
   Deriving_generators.register () ;
+  Shrinking_strategy.register () ;
   Test.run ()
