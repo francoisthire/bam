@@ -1,3 +1,9 @@
 (executable
  (name main)
- (libraries tezt-bam simple simple_failure writing_generators debugging))
+ (libraries
+  tezt-bam
+  simple
+  simple_failure
+  writing_generators
+  deriving_generators
+  debugging))
