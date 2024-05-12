@@ -9,6 +9,8 @@ let gen_name ident = match ident with "t" -> "gen" | _ -> "gen_" ^ ident
 let derive_type_variable ident = Ast_builder.Default.evar ~loc (gen_name ident)
 
 let rec derive_core_type env core_type =
+  (* We want to ensure that if the user specified a shrinker, it will be used once and not used recursively. *)
+  let env = {env with runtime= {env.runtime with shrinker= None}} in
   let core_type, runtime = Attributes.Core_type.update core_type env.runtime in
   let env = {env with runtime} in
   match core_type with
@@ -203,7 +205,11 @@ let derive_variant env constructors =
             weights names
         in
         let expr = Ast_builder.Default.elist ~loc weighted_list in
-        [%expr Bam.Std.oneof [%e expr]]
+        match env.runtime.shrinker with
+        | None ->
+            [%expr Bam.Std.oneof [%e expr]]
+        | Some shrinker ->
+            [%expr Bam.Std.oneof ~shrinker:[%e shrinker] [%e expr]]
       in
       List.fold_left2
         (fun expr name body ->

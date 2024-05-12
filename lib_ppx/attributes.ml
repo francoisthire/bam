@@ -199,7 +199,13 @@ module Type_declaration : sig
 end = struct
   let attributes = Generic.attributes Attribute.Context.type_declaration
 
-  let update = update attributes
+  (* This one can be used for variants only.*)
+  let shrinker =
+    Attribute.declare "gen.shrinker" Attribute.Context.type_declaration
+      Ast_pattern.(single_expr_payload __)
+      (fun shrinker runtime -> {runtime with shrinker= Some shrinker})
+
+  let update = update (shrinker :: attributes)
 end
 
 module Label_declaration : sig
@@ -228,5 +234,10 @@ module Core_type : sig
 end = struct
   let attributes = Generic.attributes Attribute.Context.core_type
 
-  let update = update attributes
+  let shrinker =
+    Attribute.declare "gen.shrinker" Attribute.Context.core_type
+      Ast_pattern.(single_expr_payload __)
+      (fun shrinker runtime -> {runtime with shrinker= Some shrinker})
+
+  let update = update (shrinker :: attributes)
 end

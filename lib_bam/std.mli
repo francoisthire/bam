@@ -92,6 +92,9 @@ module Shrinker : sig
           reduce first on the size on the list and then shrink the
           elements of the lists. The strategy will shrink towards a
           suffix of the list. *)
+
+  val skip_auto : 'a list t
+  (** [skip_auto] is an alias for [Skip {eq=(=); skip=`Auto}]*)
 end
 
 (** The type of random generators. *)
