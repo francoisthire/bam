@@ -1,6 +1,6 @@
 # 3-debugging
 
-Let's take a simple example and let's add a `printf`:
+Let's take a simple example and let's add a `printf` inside the property function:
 
 ```ocaml
 open Tezt_bam
@@ -32,12 +32,12 @@ HEY: 1531078954999384395
 [15:46:01.805] Try again with: _build/default/example/main.exe --verbose --file example/3-debugging/debugging.ml --title 'Debugging with bam' --seed 830377664
 ```
 
-Since we have used the shrinking, the property function run multiple
-times. However, only one line appear on stdout. The reason is that by
-default, **BAM** captures stdout/stderr and run one last time the test
-on the smallest counter-example found. This is to ease debugging so
-that what is seen is only relevant output on the counter-example
-found. Such behaviour can be relaxed by specifying the option `--no-capture`:
+The property function is run numerous times for all the various attempts but
+also because of the shrinking. However, only one line appear on stdout. The
+reason is that by default, **BAM** captures stdout/stderr and run one last time
+the test on the smallest counter-example found. This is to ease debugging so
+that what is seen is only relevant output on the counter-example found. Such
+behaviour can be relaxed by specifying the option `--no-capture`:
 
 ```bash
 saroupille@saroupille-debian:~/Git/bam$ dune exec example/main.exe -- debugging --shrink --no-capture
