@@ -621,3 +621,30 @@ let gen_c12 =
 let _ = gen_c12
 
 [@@@end]
+
+type c13 =
+  | Foo of {a: int; b: (string[@shrinker Bam.Std.Shrinker.skip_auto])}
+  | Bar of int list
+[@@deriving_inline gen]
+
+let _ = fun (_ : c13) -> ()
+
+let gen_c13 =
+  let open Bam.Std.Syntax in
+    let gen_Foo =
+      let* a = Bam.Std.int ()
+       in
+      let* b =
+        (Bam.Std.string ~shrinker:Bam.Std.Shrinker.skip_auto)
+          ~size:(Bam.Std.int ~max:10 ()) ()
+       in return (Foo { a; b }) in
+    let gen_Bar =
+      let* arg_0 =
+        let gen__007_ = Bam.Std.int () in
+        Bam.Std.list ~size:(Bam.Std.int ~max:10 ()) gen__007_
+       in return (Bar arg_0) in
+    Bam.Std.oneof [(1, gen_Foo); (1, gen_Bar)]
+
+let _ = gen_c13
+
+[@@@end]
