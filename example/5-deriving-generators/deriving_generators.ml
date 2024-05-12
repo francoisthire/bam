@@ -1,7 +1,7 @@
 open Tezt_bam
-open Bam.Std.Syntax
 
-type t = A of {x: int; b: bool} | B of string [@@deriving gen] [@@size.min 1][@@size.max 10]
+type t = A of {x: int; b: bool} | B of string
+[@@deriving gen] [@@size.min 1] [@@size.max 10]
 
 let pp fmt = function
   | A {x; b} ->
