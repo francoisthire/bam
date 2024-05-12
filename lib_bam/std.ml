@@ -22,6 +22,8 @@ module Shrinker = struct
         -> 'a List.t t
     | Prefix : 'a List.t t
     | Suffix : 'a List.t t
+
+  let skip_auto = Skip {eq= ( = ); skip= `Auto}
 end
 
 type 'a t = 'a Gen.t
