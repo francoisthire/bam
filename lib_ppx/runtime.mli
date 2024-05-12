@@ -4,7 +4,8 @@ type t =
   { limits: Limits.t
   ; override: expression Ty.Map.t
   ; gen: expression option
-  ; weight: int option }
+  ; weight: int option
+  ; use_monadic_syntax: bool ref }
 
 val default : t
 
