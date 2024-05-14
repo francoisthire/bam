@@ -1,0 +1,3 @@
+conflicts: [
+  "ocaml-option-bytecode-only"
+]

@@ -33,3 +33,6 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/francoisthire/bam.git"
+conflicts: [
+  "ocaml-option-bytecode-only"
+]
