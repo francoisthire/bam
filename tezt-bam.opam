@@ -33,6 +33,5 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/francoisthire/bam.git"
-conflicts: [
-  "ocaml-option-bytecode-only"
-]
+available: arch != "arm32" & arch != "x86_32"
+
