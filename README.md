@@ -82,7 +82,11 @@ let register () =
       Ok ()
   in  
   Pbt.register ~__FILE__ ~title:"Simple example of bam" ~tags:["bam"; "simple"]
-    ~gen ~property ()	
+    ~gen ~property ()
+
+let _ = 
+    register ();
+    Test.run ()
 ```
 
 ![executation of bam example](media/bam.png)
@@ -123,7 +127,11 @@ let register () =
       Ok ()
   in  
   Pbt.register ~__FILE__ ~title:"Simple example of bam" ~tags:["bam"; "simple"]
-    ~gen ~property ()	    
+    ~gen ~property ()
+
+let _ = 
+    register ();
+    Test.run ()
 ```
 
 This example and how it can be run are explained through the various
