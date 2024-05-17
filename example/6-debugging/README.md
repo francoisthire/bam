@@ -1,4 +1,4 @@
-# 3-debugging
+# 6-debugging
 
 Let's take a simple example and let's add a `printf` inside the property function:
 

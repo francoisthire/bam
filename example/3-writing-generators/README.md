@@ -1,4 +1,4 @@
-# 4-writing-generators
+# 3-writing-generators
 
 One can take advantage of the monadic interface of *bam* to define
 generators.
