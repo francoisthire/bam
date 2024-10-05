@@ -276,20 +276,29 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
       | Error (`Fail err) ->
           `Failed err )
 
-let shrink =
-  Clap.flag ~set_long:"shrink"
-    ~description:"Use for PBT test to find a smaller counter-example" false
+module Cli = struct
+  let section =
+    Clap.section
+      ~description:"Options that can be used for PBT tests using Bam." "Bam"
 
-let capture =
-  Clap.flag ~unset_long:"no-capture"
-    ~description:
-      "While running examples, do not capture any output from stdout or stderr"
-    true
+  let shrink =
+    Clap.flag ~section ~set_long:"shrink"
+      ~description:"Use for PBT test to find a smaller counter-example." false
 
-let aggressive =
-  Clap.default_int ~long:"aggressive"
-    ~description:"Make the shrinking heuristic more aggressive (should be >= 1)"
-    0
+  let capture =
+    Clap.flag ~section ~unset_long:"no-capture"
+      ~description:
+        "While running examples, do not capture any output from stdout or \
+         stderr."
+      true
+
+  let aggressive =
+    Clap.default_int ~section ~long:"aggressive"
+      ~description:
+        "Make the shrinking heuristic more aggressive (should be >= 1)." 0
+end
+
+include Cli
 
 let register ?(hash = Hashtbl.hash)
     ?(pp =
