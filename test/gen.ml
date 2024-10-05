@@ -167,10 +167,27 @@ let root () =
   Tezt_bam.Pbt.register ~__FILE__ ~title:"Gen.root" ~tags:["gen"; "root"] ~gen
     ~property ()
 
+let hard_coded_values () =
+  let gen =
+    let int_gen =
+      let gen = [0; 1; 2; 3; 4] |> List.to_seq |> Seq.cycle |> Gen.of_seq in
+      Gen.bind gen (fun root -> Std.int ?root ~min:0 ~max:10 ())
+    in
+    Std.list ~size:(Std.return 5) int_gen
+  in
+  Tezt_bam.Pbt.register ~__FILE__ ~title:"self"
+    ~compute_execution_statistics:false ~stop_after:(`Count 1) ~tags:["self"]
+    ~gen
+    ~property:(fun l ->
+      if l = [0; 1; 2; 3; 4] then Ok ()
+      else Error (`Fail "The generated list should be [0;1;2;3;4]") )
+    ()
+
 let register () =
   z_range_regression () ;
   float_range () ;
   float_in_bounds () ;
   crunch () ;
   map_bind_return () ;
-  root ()
+  root () ;
+  hard_coded_values ()
