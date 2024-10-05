@@ -123,20 +123,13 @@ module Forest = struct
 
   let map f = Seq.map (map f)
 
-  let first seq =
+  let uncons seq =
     match Seq.uncons seq with
     | None ->
         (* This invariant is ensured by the module itself. *)
         assert false
-    | Some (x, _) ->
-        x
-
-  let is_singleton seq =
-    match Seq.uncons seq with
-    | None ->
-        false
-    | Some (_x, seq) ->
-        Seq.is_empty seq
+    | Some (x, seq) ->
+        (x, seq)
 
   let crunch i seq = Seq.map (crunch i) seq
 

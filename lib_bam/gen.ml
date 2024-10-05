@@ -72,7 +72,7 @@ let root (gen : 'a t) f rs =
      to the function [f] is indeed the one that would be produced with
      a bind. *)
   let rs_left, _ = Random.split rs in
-  Forest.first (gen rs_left) |> Tree.root |> Fun.flip f rs
+  Forest.uncons (gen rs_left) |> fst |> Tree.root |> Fun.flip f rs
 
 module Syntax = struct
   let ( let* ) x f = bind x f
@@ -205,4 +205,5 @@ let run ?(on_failure = failwith) gen state =
      [on_failure] argument to [Gen.run]."
   in
   let forest = gen state in
-  if Forest.is_singleton forest then Forest.first forest else on_failure message
+  let first, remaining_trees = forest |> Forest.uncons in
+  if Seq.is_empty remaining_trees then first else on_failure message
