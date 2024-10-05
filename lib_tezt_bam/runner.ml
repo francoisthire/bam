@@ -21,7 +21,7 @@ module Cli = struct
       ~description:
         "While running examples, do not capture any output from stdout or \
          stderr."
-      true
+      (Cli.Options.loop_mode <> Infinite)
 
   let aggressive =
     Clap.default_int ~section ~long:"aggressive"
@@ -29,8 +29,16 @@ module Cli = struct
         "Make the shrinking heuristic more aggressive (should be >= 1)." 0
 
   let statistics =
-    Clap.flag ~description:"Compute execution statistics" ~set_long:"stats"
+    Clap.flag ~section ~description:"Compute execution statistics"
+      ~set_long:"stats" ~set_long_synonyms:["statistics"]
       (shrink || Cli.Options.loop_mode <> Infinite)
+
+  let log_statistics_frequnecy =
+    Clap.optional_int ~section
+      ~description:
+        "Frequency when execution statistics are logged (in seconds). A \
+         negative value can be used for not showing any statistics."
+      ~long:"log-statistics-frequency" ~long_synonyms:["log-stats-frequency"] ()
 end
 
 module Default = struct
@@ -59,17 +67,22 @@ module Default = struct
      execution statistics, hence we deactivate this option to speed up
      the number of samples tested. *)
   let compute_execution_statistics = Cli.statistics
+
+  (* By default a log will be issued every 2 seconds. *)
+  let log_statistics_frequency =
+    let v = Option.value ~default:2 Cli.log_statistics_frequnecy in
+    Mtime.Span.(v * s)
 end
 
 module Execution_statistics = struct
   type t =
-    { start: Mtime_clock.counter
-    ; min: Mtime.span
-    ; max: Mtime.span
-    ; avg: Mtime.span
-    ; count: int
-    ; total: Mtime.span
-    ; distinct_values: Set.t }
+    { start: Mtime_clock.counter (* When the test started. *)
+    ; min: Mtime.span (* Minimum execution time on a sample. *)
+    ; max: Mtime.span (* Maximum execution time on a sample. *)
+    ; avg: Mtime.span (* Average execution time. *)
+    ; count: int (* Number of samples tested. *)
+    ; total: Mtime.span (* Total execution time since the test has started. *)
+    ; distinct_values: Set.t (* Distinct number of samples tested. *) }
 
   let empty () =
     { start= Mtime_clock.counter ()
@@ -123,11 +136,15 @@ module Execution_statistics = struct
     | `Loop ->
         false
     | `Count n ->
-        stats.count > n
+        stats.count >= n
     | `Timeout t ->
         t *. 1_000_000_000. < Mtime.Span.to_float_ns stats.total
 
   let samples stats = Set.cardinal stats.distinct_values
+
+  let pp_short fmt {count; total; _} =
+    Format.fprintf fmt "Execution time: %a@.Number of executions: %d"
+      Mtime.Span.pp total count
 
   let pp fmt ({start= _; min; max; avg; count; total; distinct_values} as stats)
       =
@@ -143,13 +160,17 @@ module Execution_statistics = struct
 end
 
 let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples
-    ~compute_execution_statistics ~hash ~pp ~regression ~capture ~shrink
-    ~stop_after ~on_sample gen f =
+    ~compute_execution_statistics ~log_statistics_frequency ~hash ~pp
+    ~regression ~capture ~shrink ~stop_after ~on_sample gen f =
   let update (stats : Execution_statistics.t) value =
     if not compute_execution_statistics then
-      { stats with
-        Execution_statistics.count= stats.count + 1
-      ; total= Mtime_clock.count stats.start }
+      if Mtime.Span.compare log_statistics_frequency Mtime.Span.zero >= 0 then
+        (* We only update the number of samples tested. This is used to
+           print a log when we run the test in loop. *)
+        { stats with
+          Execution_statistics.count= stats.count + 1
+        ; total= Mtime_clock.count stats.start }
+      else stats
     else (
       on_sample value ;
       Execution_statistics.update stats (hash value) )
@@ -229,14 +250,29 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples
         | Error (`Fail message) ->
             Error (Tree.return x, message, stats) )
   in
-  let should_log = ref Mtime.Span.(2 * s) in
+  let initial_logging =
+    let now = Mtime_clock.now () in
+    if Mtime.Span.compare log_statistics_frequency Mtime.Span.zero > 0 then
+      Mtime.add_span now log_statistics_frequency |> Option.get
+    else
+      (* Assuming we won't run the test for a whole year, nothing will be printed. *)
+      Mtime.add_span now Mtime.Span.year |> Option.get
+  in
+  let next_logging = ref initial_logging in
+  (* This requires to be in no capture mode. *)
+  let show_statistics stats =
+    if Mtime.is_later (Mtime_clock.now ()) ~than:!next_logging then (
+      next_logging :=
+        Mtime.add_span !next_logging log_statistics_frequency |> Option.get ;
+      if compute_execution_statistics then
+        log ~level:Report "%a" Execution_statistics.pp stats
+      else log ~level:Report "%a" Execution_statistics.pp_short stats )
+  in
   (* Repeat the function [f] [count] times with random inputs. *)
   let rec loop stats =
     (* When using loop, it can be useful to print a text to ensure
        liveness. *)
-    if Mtime.Span.compare stats.Execution_statistics.total !should_log >= 0 then (
-      log ~level:Report "Number of execution: %d" stats.count ;
-      should_log := Mtime.Span.add !should_log Mtime.Span.(2 * s) ) ;
+    show_statistics stats ;
     if Execution_statistics.should_stop stop_after stats then Ok stats
     else
       let tree = Gen.run gen (get_state ()) in
@@ -336,18 +372,27 @@ let register ?(hash = Hashtbl.hash)
     ?(pp =
       fun fmt _s ->
         Format.fprintf fmt "<Unable to print the value: no printer given>")
-    ?(expected_sampling_ratio = Default.expected_sampling_ratio)
-    ?(minimum_number_of_samples = Default.minimum_number_of_samples)
-    ?(compute_execution_statistics = true) ?(regression = [])
+    ?(compute_execution_statistics = Default.compute_execution_statistics)
+    ?(expected_sampling_ratio =
+      if compute_execution_statistics then Default.expected_sampling_ratio
+      else 0.0)
+    ?(minimum_number_of_samples =
+      if compute_execution_statistics then Default.minimum_number_of_samples
+      else 0) ?log_statistics_frequency ?(regression = [])
     ?(stop_after = Default.stop_after) ?(on_sample = fun _ -> ()) ~__FILE__
     ~title ~tags ~gen ~property () =
   Test.register ~seed:Random ~__FILE__ ~title ~tags
   @@ fun () ->
+  let log_statistics_frequency =
+    Option.fold ~none:Default.log_statistics_frequency
+      ~some:(fun n -> Mtime.Span.(n * s))
+      log_statistics_frequency
+  in
   let open Cli in
   match
     run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples
-      ~compute_execution_statistics ~hash ~pp ~regression ~capture ~shrink
-      ~stop_after ~on_sample gen property
+      ~compute_execution_statistics ~log_statistics_frequency ~hash ~pp
+      ~regression ~capture ~shrink ~stop_after ~on_sample gen property
   with
   | `Ok ->
       Lwt.return_unit
