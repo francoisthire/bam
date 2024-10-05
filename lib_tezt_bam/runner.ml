@@ -180,8 +180,12 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
         | Error (`Fail message) ->
             Error (Tree.return x, message, stats) )
   in
+  let should_log = ref Mtime.Span.(2 * s) in
   (* Repeat the function [f] [count] times with random inputs. *)
   let rec loop stats =
+    if Mtime.Span.compare stats.Stats.total !should_log >= 0 then (
+      log ~level:Report "Number of execution: %d" stats.count ;
+      should_log := Mtime.Span.add !should_log Mtime.Span.(2 * s) ) ;
     if Stats.should_stop stop_after stats then Ok stats
     else
       let tree = Gen.run gen (get_state ()) in
