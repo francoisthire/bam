@@ -119,32 +119,53 @@ val crunch : int -> 'a t -> 'a t
     shrinking. It increases the number of values that will be used
     during the shrinking. More details in {!page-shrinking}. *)
 
-val int : ?shrinker:int Shrinker.t -> ?min:int -> ?max:int -> unit -> int t
-(** [int ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
+val of_seq : 'a Seq.t -> 'a option t
+(** [of_seq seq] returns a generator that will produce successively
+    the values of the sequence until the sequence is empty. Those
+    values are intended to be used as the root argument of other generators. *)
+
+val int :
+  ?root:int -> ?shrinker:int Shrinker.t -> ?min:int -> ?max:int -> unit -> int t
+(** [int ?root ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
     integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Int}[0].
  *)
 
 val int32 :
-  ?shrinker:int32 Shrinker.t -> ?min:int32 -> ?max:int32 -> unit -> int32 t
-(** [int ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
+     ?root:int32
+  -> ?shrinker:int32 Shrinker.t
+  -> ?min:int32
+  -> ?max:int32
+  -> unit
+  -> int32 t
+(** [int ?root ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
     integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Int}[0].
  *)
 
 val int64 :
-  ?shrinker:int64 Shrinker.t -> ?min:int64 -> ?max:int64 -> unit -> int64 t
-(** [int ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
+     ?root:int64
+  -> ?shrinker:int64 Shrinker.t
+  -> ?min:int64
+  -> ?max:int64
+  -> unit
+  -> int64 t
+(** [int ?root ?shrinker ?(min=0) ?(max=Int.max_int) ()] is a generator for
     integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Int}[0].
  *)
 
 val float :
-  ?shrinker:float Shrinker.t -> ?min:float -> ?max:float -> unit -> float t
-(** [float ?shrinker ?(min=0.) ?(max=Float.max_float) ()] generates
+     ?root:float
+  -> ?shrinker:float Shrinker.t
+  -> ?min:float
+  -> ?max:float
+  -> unit
+  -> float t
+(** [float ?root ?shrinker ?(min=0.) ?(max=Float.max_float) ()] generates
     integers. Bounds are inclusive.
 
     Default strategy is {!constructor:Shrinker.Float}[0.].
@@ -163,8 +184,9 @@ val bool : ?shrinker:bool Shrinker.t -> unit -> bool t
     Default strategy is {!constructor:Shrinker.Bool}[false].
  *)
 
-val char : ?shrinker:Char.t Shrinker.t -> ?printable:bool -> unit -> char t
-(** [char ?shrinker ?(printable=true) ()] generates a char.
+val char :
+  ?root:char -> ?shrinker:Char.t Shrinker.t -> ?printable:bool -> unit -> char t
+(** [char ?root ?shrinker ?(printable=true) ()] generates a char.
 
     Default strategy is {!constructor:Shrinker.Char}['a].    
  *)

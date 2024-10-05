@@ -36,29 +36,36 @@ val make : 'a -> ('a -> 'a Seq.t) -> 'a t
     build an infinite tree if the function [f] never returns an empty
     sequence. *)
 
-val z_range : ?origin:Z.t -> min:Z.t -> max:Z.t -> unit -> Z.t t
-(** [range ?shrink min max] returns a generator producing a uniform
-    value between [min] (inclusive) and [max] (exclusive). It shrinks
-    towards the value [origin] using a binary search (see
+val z_range : ?root:Z.t -> ?origin:Z.t -> min:Z.t -> max:Z.t -> unit -> Z.t t
+(** [z_range ?root ?shrink min max] returns a generator producing a
+    uniform value between [min] (inclusive) and [max] (exclusive). It
+    shrinks towards the value [origin] using a binary search (see
     [Tree.binary_search]. By default [origin] is [0] if [0] is in the
-    interval [min;max]. Otherwise [origin] is set to [min].     
+    interval [min;max]. Otherwise [origin] is set to [min].
+
+    If [root] is specified, the value returned is [root] with the same
+    shrinking tree as if the random generator had produce this value.
 *)
 
 val float_range :
-     ?exhaustive_search_digits:int
+     ?root:float
+  -> ?exhaustive_search_digits:int
   -> ?precision_digits:int
   -> ?origin:float
   -> min:float
   -> max:float
   -> unit
   -> float t
-(** [range ?shrink min max] returns a generator producing a value
-    between [min] (inclusive) and [max] (exclusive). It shrinks
-    towards the value [min] using a binary search (see
+(** [float_range ?root ?shrink min max] returns a generator producing
+    a value between [min] (inclusive) and [max] (exclusive). It
+    shrinks towards the value [min] using a binary search (see
     [Tree.binary_search]. The generator is not uniform. In particular
     when the fractional part of [min] and [max] are getting closer to
     [0.5], the generator may tend to create more values equal to [min]
     or [max]. If the fractional part is [0.], it should be uniform.
+
+    If [root] is specified, the value returned is [root] with the same
+    shrinking tree as if the random generator had produce this value.
 *)
 
 val run : ?on_failure:(string -> 'a Tree.t) -> 'a t -> Random.t -> 'a Tree.t
@@ -89,6 +96,10 @@ val root : 'a t -> ('a -> 'b t) -> 'b t
 
     As a result, this new generator forgets completely the other
     values of [gen]. It acts as if it contains only the root. *)
+
+val of_seq : 'a Seq.t -> 'a option t
+(** [of_seq seq] returns a generator that will produce successively
+    the values of the sequence until the sequence is empty. *)
 
 module Syntax : sig
   val ( let* ) : 'a t -> ('a -> 'b t) -> 'b t
