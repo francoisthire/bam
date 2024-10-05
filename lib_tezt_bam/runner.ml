@@ -152,6 +152,8 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
       let finally () =
         Unix.dup2 ~cloexec:true stdout Unix.stdout ;
         Unix.dup2 ~cloexec:true stderr Unix.stderr ;
+        Unix.close stdout ;
+        Unix.close stderr ;
         Unix.close dump_stdout ;
         Unix.close dump_stderr
       in
