@@ -3,6 +3,7 @@ val register :
   -> ?pp:(Format.formatter -> 'a -> unit)
   -> ?expected_sampling_ratio:float
   -> ?minimum_number_of_samples:int
+  -> ?no_stats:bool
   -> ?regression:'a list
   -> ?stop_after:[`Timeout of float | `Count of int | `Loop]
   -> ?on_sample:('a -> unit)
