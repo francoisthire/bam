@@ -13,8 +13,6 @@ module Default = struct
         [%expr Bam.Std.bool ~shrinker:[%e shrinker] ()]
 
   let int ~shrinker ~min ~max () =
-    let min = Option.map (Ast_builder.Default.eint ~loc) min in
-    let max = Option.map (Ast_builder.Default.eint ~loc) max in
     let gen =
       match shrinker with
       | None ->
@@ -33,8 +31,6 @@ module Default = struct
         [%expr [%e gen] ~min:[%e min] ~max:[%e max] ()]
 
   let int32 ~shrinker ~min ~max () =
-    let min = Option.map (Ast_builder.Default.eint32 ~loc) min in
-    let max = Option.map (Ast_builder.Default.eint32 ~loc) max in
     let gen =
       match shrinker with
       | None ->
@@ -53,8 +49,6 @@ module Default = struct
         [%expr [%e gen] ~min:[%e min] ~max:[%e max] ()]
 
   let int64 ~shrinker ~min ~max () =
-    let min = Option.map (Ast_builder.Default.eint64 ~loc) min in
-    let max = Option.map (Ast_builder.Default.eint64 ~loc) max in
     let gen =
       match shrinker with
       | None ->

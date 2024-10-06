@@ -503,15 +503,18 @@ module Advanced = struct
 
   [@@@end]
 
-  type t6 = {a: (int[@max 20]); b: string} [@@deriving_inline gen] [@@min 5]
+  type t6 = {a: (int[@max 30 + 20]); b: string}
+  [@@deriving_inline gen] [@@min 5]
 
   let _ = fun (_ : t6) -> ()
 
-  let gen_t6 =
-    let open Bam.Std.Syntax in
-    let* a = Bam.Std.int ~min:5 ~max:20 () in
-    let* b = Bam.Std.string ~size:(Bam.Std.int ~max:10 ()) () in
-    return {a; b}
+  
+let gen_t6 =
+  let open Bam.Std.Syntax in
+    let* a = Bam.Std.int ~min:5 ~max:(30 + 20) ()
+     in
+    let* b = Bam.Std.string ~size:(Bam.Std.int ~max:10 ()) ()
+     in return { a; b }
 
   let _ = gen_t6
 

@@ -1,6 +1,9 @@
 open Ppxlib
 
-type _ ranged = Int : int ranged | Int32 : int32 ranged | Int64 : int64 ranged
+type _ ranged =
+  | Int : expression ranged
+  | Int32 : expression ranged
+  | Int64 : expression ranged
 
 let ranged_compare (type a1 a2) : a1 ranged -> a2 ranged -> (a1, a2) Dmap.cmp =
  fun left right ->

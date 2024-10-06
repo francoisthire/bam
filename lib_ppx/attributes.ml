@@ -3,6 +3,8 @@ include Attribute
 open Runtime
 open Ty
 
+let loc = !Ast_helper.default_loc
+
 module State_monad = struct
   type ('node, 'state) t = 'node -> 'state -> 'node * 'state
 
@@ -44,19 +46,19 @@ module Generic : sig
 end = struct
   let min context =
     Attribute.declare "gen.min" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun min runtime ->
         {runtime with limits= {runtime.limits with min= Some min}} )
 
   let max context =
     Attribute.declare "gen.max" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun max runtime ->
         {runtime with limits= {runtime.limits with max= Some max}} )
 
   let int_min context =
     Attribute.declare "gen.int.min" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun min runtime ->
         { runtime with
           limits=
@@ -66,7 +68,7 @@ end = struct
 
   let int_max context =
     Attribute.declare "gen.int.max" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun max runtime ->
         { runtime with
           limits=
@@ -76,7 +78,7 @@ end = struct
 
   let int32_min context =
     Attribute.declare "gen.int32.min" context
-      Ast_pattern.(single_expr_payload (eint32 __))
+      Ast_pattern.(single_expr_payload __)
       (fun min runtime ->
         { runtime with
           limits=
@@ -86,7 +88,7 @@ end = struct
 
   let int32_max context =
     Attribute.declare "gen.int32.max" context
-      Ast_pattern.(single_expr_payload (eint32 __))
+      Ast_pattern.(single_expr_payload __)
       (fun max runtime ->
         { runtime with
           limits=
@@ -96,7 +98,7 @@ end = struct
 
   let int64_min context =
     Attribute.declare "gen.int64.min" context
-      Ast_pattern.(single_expr_payload (eint64 __))
+      Ast_pattern.(single_expr_payload __)
       (fun min runtime ->
         { runtime with
           limits=
@@ -106,7 +108,7 @@ end = struct
 
   let int64_max context =
     Attribute.declare "gen.int64.max" context
-      Ast_pattern.(single_expr_payload (eint64 __))
+      Ast_pattern.(single_expr_payload __)
       (fun max runtime ->
         { runtime with
           limits=
@@ -116,37 +118,41 @@ end = struct
 
   let size_min context =
     Attribute.declare "gen.size.min" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun size_min runtime ->
         { runtime with
-          limits= {runtime.limits with size_min= Some (Int.max 0 size_min)} } )
+          limits=
+            {runtime.limits with size_min= Some [%expr Int.max 0 [%e size_min]]}
+        } )
 
   let size_max context =
     Attribute.declare "gen.size.max" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun size_max runtime ->
         {runtime with limits= {runtime.limits with size_max= Some size_max}} )
 
   let string_size_min context =
     Attribute.declare "gen.string.size.min" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun size_min runtime ->
         { runtime with
           limits=
             { runtime.limits with
               sized_min=
-                Sized_map.add (E String) (Int.max 0 size_min)
+                Sized_map.add (E String)
+                  [%expr Int.max 0 [%e size_min]]
                   runtime.limits.sized_min } } )
 
   let string_size_max context =
     Attribute.declare "gen.string.size.max" context
-      Ast_pattern.(single_expr_payload (eint __))
+      Ast_pattern.(single_expr_payload __)
       (fun size_max runtime ->
         { runtime with
           limits=
             { runtime.limits with
               sized_max=
-                Sized_map.add (E String) (Int.max 0 size_max)
+                Sized_map.add (E String)
+                  [%expr Int.max 0 [%e size_max]]
                   runtime.limits.sized_max } } )
 
   let overrides =

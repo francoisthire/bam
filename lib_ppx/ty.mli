@@ -1,6 +1,9 @@
 open Ppxlib
 
-type _ ranged = Int : int ranged | Int32 : int32 ranged | Int64 : int64 ranged
+type _ ranged =
+  | Int : expression ranged
+  | Int32 : expression ranged
+  | Int64 : expression ranged
 
 val ranged_compare : 'a ranged -> 'b ranged -> ('a, 'b) Dmap.cmp
 
