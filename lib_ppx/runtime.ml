@@ -158,7 +158,8 @@ let get_default (type a) ~use_monadic_syntax shrinker limits : a Ty.t -> a =
   | Unit ->
       Default.unit
   | Bool ->
-      Default.bool ~shrinker
+      let res : expression = Default.bool ~shrinker in
+      res
   | Char ->
       Default.char ~shrinker
   | Ranged Int ->
