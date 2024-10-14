@@ -5,7 +5,8 @@ let loc = !Ast_helper.default_loc
 module Default = struct
   let unit = [%expr Bam.Std.return ()]
 
-  let bool ~shrinker =
+  let bool : shrinker:expression option -> expression =
+   fun ~shrinker ->
     match shrinker with
     | None ->
         [%expr Bam.Std.bool ()]
