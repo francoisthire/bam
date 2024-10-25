@@ -1,5 +1,16 @@
 Changelog for Bam library
 
+## v0.3 (2024-10-25)
+
+- Fix a file descriptor leak (#8)
+
+- More control over the computation of statistics (#8)
+
+- Fix a typing regression with OCaml 5.2 (#8)
+
+- Update the dependencies to be compatible with OCaml 5.2 (#11)
+  (Thanks @mathiasbourgoin, @matthiasdrp)
+
 ## v0.2 (2024-05-12)
 
 - #2,#5: Add a PPX for Bam derving generators from a type or a module type
