@@ -13,9 +13,8 @@ depends: [
   "ocaml"
   "dune" {>= "3.7" & >= "3.7"}
   "tezt" {>= "4.0"}
-  "bam"
-  "bam"  {with-test & >= "0.3"}
-  "bam-ppx"
+  "bam"  {>= "0.3"}
+  "bam-ppx" {>= "0.3"}
   "mtime" {>= "2.0"}
   "odoc" {with-doc}
 ]
