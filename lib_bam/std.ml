@@ -36,10 +36,14 @@ let root = Gen.root
 
 let crunch = Gen.crunch
 
-let int ?(shrinker = Shrinker.Default) ?(min = 0) ?(max = Int.max_int) () =
+let of_seq = Gen.of_seq
+
+let int ?root ?(shrinker = Shrinker.Default) ?(min = 0) ?(max = Int.max_int) ()
+    =
   let range ?origin ~min ~max () =
     let origin = Option.map Z.of_int origin in
-    Gen.z_range ?origin ~min:(Z.of_int min) ~max:(Z.of_int max) ()
+    let root = Option.map Z.of_int root in
+    Gen.z_range ?root ?origin ~min:(Z.of_int min) ~max:(Z.of_int max) ()
     |> Gen.map Z.to_int
   in
   match shrinker with
@@ -51,11 +55,12 @@ let int ?(shrinker = Shrinker.Default) ?(min = 0) ?(max = Int.max_int) () =
   | Int n ->
       range ~origin:n ~min ~max ()
 
-let int32 ?(shrinker = Shrinker.Default) ?(min = Int32.zero)
+let int32 ?root ?(shrinker = Shrinker.Default) ?(min = Int32.zero)
     ?(max = Int32.max_int) () =
   let range ?origin ~min ~max () =
     let origin = Option.map Z.of_int32 origin in
-    Gen.z_range ?origin ~min:(Z.of_int32 min) ~max:(Z.of_int32 max) ()
+    let root = Option.map Z.of_int32 root in
+    Gen.z_range ?root ?origin ~min:(Z.of_int32 min) ~max:(Z.of_int32 max) ()
     |> Gen.map Z.to_int32
   in
   match shrinker with
@@ -67,11 +72,12 @@ let int32 ?(shrinker = Shrinker.Default) ?(min = Int32.zero)
   | Int32 n ->
       range ~origin:n ~min ~max ()
 
-let int64 ?(shrinker = Shrinker.Default) ?(min = Int64.zero)
+let int64 ?root ?(shrinker = Shrinker.Default) ?(min = Int64.zero)
     ?(max = Int64.max_int) () =
   let range ?origin ~min ~max () =
     let origin = Option.map Z.of_int64 origin in
-    Gen.z_range ?origin ~min:(Z.of_int64 min) ~max:(Z.of_int64 max) ()
+    let root = Option.map Z.of_int64 root in
+    Gen.z_range ?root ?origin ~min:(Z.of_int64 min) ~max:(Z.of_int64 max) ()
     |> Gen.map Z.to_int64
   in
   match shrinker with
@@ -83,19 +89,19 @@ let int64 ?(shrinker = Shrinker.Default) ?(min = Int64.zero)
   | Int64 n ->
       range ~origin:n ~min ~max ()
 
-let float ?(shrinker = Shrinker.Default) ?(min = 0.) ?(max = Float.max_float) ()
-    =
+let float ?root ?(shrinker = Shrinker.Default) ?(min = 0.)
+    ?(max = Float.max_float) () =
   match shrinker with
   | Manual shrinker ->
-      let*! root = Gen.float_range ~min ~max () in
+      let*! root = Gen.float_range ?root ~min ~max () in
       Gen.make root shrinker
   | Default ->
-      Gen.float_range ~min ~max ()
+      Gen.float_range ?root ~min ~max ()
   | Float f ->
-      Gen.float_range ~origin:f ~min ~max ()
+      Gen.float_range ?root ~origin:f ~min ~max ()
   | Float_precision {exhaustive_search_digits; precision_digits; target} ->
-      Gen.float_range ~exhaustive_search_digits ~precision_digits ~origin:target
-        ~min ~max ()
+      Gen.float_range ?root ~exhaustive_search_digits ~precision_digits
+        ~origin:target ~min ~max ()
 
 let pair ?(shrinker = Shrinker.Default) left right =
   match shrinker with
@@ -128,19 +134,20 @@ let bool ?(shrinker = Shrinker.Default) () =
       let* x = int ~min:0 ~max:2 () in
       if x = 0 = b then return true else return false
 
-let char ?(shrinker = Shrinker.Default) ?(printable = true) () =
+let char ?root ?(shrinker = Shrinker.Default) ?(printable = true) () =
   let base = if printable then Char.code 'a' else 0 in
   let max = if printable then 26 else 256 in
+  let root = root |> Option.map (fun root -> Char.code root - Char.code 'a') in
   match shrinker with
   | Manual shrinker ->
-      let*! root = int ~min:0 ~max () in
+      let*! root = int ?root ~min:0 ~max () in
       Gen.make (Char.chr (base + root)) shrinker
   | Default ->
-      let* offset = int ~min:0 ~max () in
+      let* offset = int ?root ~min:0 ~max () in
       return (Char.chr (base + offset))
   | Char c ->
       let origin = Char.code c - base in
-      let* offset = int ~shrinker:(Int origin) ~min:0 ~max () in
+      let* offset = int ?root ~shrinker:(Int origin) ~min:0 ~max () in
       return (Char.chr (base + offset))
 
 module Gen_list = struct

@@ -72,7 +72,7 @@ let root (gen : 'a t) f rs =
      to the function [f] is indeed the one that would be produced with
      a bind. *)
   let rs_left, _ = Random.split rs in
-  Forest.first (gen rs_left) |> Tree.root |> Fun.flip f rs
+  Forest.uncons (gen rs_left) |> fst |> Tree.root |> Fun.flip f rs
 
 module Syntax = struct
   let ( let* ) x f = bind x f
@@ -120,8 +120,8 @@ let with_merge : 'a Merge.t -> 'a t -> 'a t =
  fun merge gen rs ->
   Forest.map_tree (fun tree -> Tree.with_merge ~merge tree) (gen rs)
 
-let z_range : ?origin:Z.t -> min:Z.t -> max:Z.t -> unit -> Z.t t =
- fun ?origin ~min ~max () rs ->
+let z_range : ?root:Z.t -> ?origin:Z.t -> min:Z.t -> max:Z.t -> unit -> Z.t t =
+ fun ?root ?origin ~min ~max () rs ->
   let open Z.Compare in
   if max <= min then Forest.return min
   else
@@ -132,7 +132,7 @@ let z_range : ?origin:Z.t -> min:Z.t -> max:Z.t -> unit -> Z.t t =
         ~fill:(fun bytes pos len -> PRNG.Splitmix.State.bytes rs bytes pos len)
         upper_bound
     in
-    let initial = Z.add min start in
+    let initial = match root with None -> Z.add min start | Some v -> v in
     let origin =
       Option.value origin
         ~default:(if min <= Z.zero && Z.zero <= max then Z.zero else min)
@@ -140,20 +140,27 @@ let z_range : ?origin:Z.t -> min:Z.t -> max:Z.t -> unit -> Z.t t =
     Tree.binary_search ~initial ~origin () |> Forest.lift
 
 let float_range :
-       ?exhaustive_search_digits:int
+       ?root:float
+    -> ?exhaustive_search_digits:int
     -> ?precision_digits:int
     -> ?origin:float
     -> min:float
     -> max:float
     -> unit
     -> float t =
- fun ?exhaustive_search_digits ?precision_digits ?origin ~min ~max () rs ->
+ fun ?root ?exhaustive_search_digits ?precision_digits ?origin ~min ~max () rs ->
   let origin =
     Option.value origin ~default:(if min <= 0. && 0. <= max then 0. else min)
   in
   if min >= max then return min rs
   else if max -. min <= 1. then
-    let initial, _ = Random.float (max -. min) rs in
+    let initial =
+      match root with
+      | None ->
+          Random.float (max -. min) rs |> fst
+      | Some float ->
+          float
+    in
     Tree.fractional_search ?exhaustive_search_digits ?precision_digits ~initial
       ~origin ()
     |> Forest.lift
@@ -171,7 +178,9 @@ let float_range :
         ~max:(Z.sub (Z.of_float maxi) shift)
         () rs
     in
-    let fractional = Random.float 1. rs' |> fst in
+    let fractional =
+      match root with None -> Random.float 1. rs' |> fst | Some float -> float
+    in
     let ff, fi = Float.modf fractional in
     let fractional_forest =
       Tree.fractional_search ?exhaustive_search_digits ?precision_digits
@@ -184,6 +193,10 @@ let float_range :
           (fun fractional ->
             Float.max min (value +. fractional +. min) |> Float.min max )
           fractional_forest )
+
+let of_seq roots =
+  let roots = Seq.to_dispenser roots in
+  fun rs -> return (roots ()) rs
 
 let crunch i (gen : 'a t) : 'a t =
  fun rs ->
@@ -205,4 +218,5 @@ let run ?(on_failure = failwith) gen state =
      [on_failure] argument to [Gen.run]."
   in
   let forest = gen state in
-  if Forest.is_singleton forest then Forest.first forest else on_failure message
+  let first, remaining_trees = forest |> Forest.uncons in
+  if Seq.is_empty remaining_trees then first else on_failure message

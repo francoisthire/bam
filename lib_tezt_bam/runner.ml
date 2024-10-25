@@ -2,31 +2,87 @@ open Tezt
 open Bam
 module Set = Set.Make (Int)
 
-let default_minimum_sampling_ratio = 0.10
-
-let default_minimum_number_of_samples = 50
-
-let default_stop_after =
-  match Cli.Options.loop_mode with
-  | Infinite ->
-      `Loop
-  | Count 1 ->
-      `Timeout 0.100
-  | Count n ->
-      `Count n
-
 let log ?(level = Cli.Logs.Info) ?(color = Log.Color.FG.magenta) text =
   Log.log ~level ~prefix:"pbt" ~color text
 
-module Stats = struct
+module Cli = struct
+  include Cli
+
+  let section =
+    Clap.section
+      ~description:"Options that can be used for PBT tests using Bam." "Bam"
+
+  let shrink =
+    Clap.flag ~section ~set_long:"shrink"
+      ~description:"Use for PBT test to find a smaller counter-example." false
+
+  let capture =
+    Clap.flag ~section ~unset_long:"no-capture"
+      ~description:
+        "While running examples, do not capture any output from stdout or \
+         stderr."
+      (Cli.Options.loop_mode <> Infinite)
+
+  let aggressive =
+    Clap.default_int ~section ~long:"aggressive"
+      ~description:
+        "Make the shrinking heuristic more aggressive (should be >= 1)." 0
+
+  let statistics =
+    Clap.flag ~section ~description:"Compute execution statistics"
+      ~set_long:"stats" ~set_long_synonyms:["statistics"]
+      (shrink || Cli.Options.loop_mode <> Infinite)
+
+  let log_statistics_frequnecy =
+    Clap.optional_int ~section
+      ~description:
+        "Frequency when execution statistics are logged (in seconds). A \
+         negative value can be used for not showing any statistics."
+      ~long:"log-statistics-frequency" ~long_synonyms:["log-stats-frequency"] ()
+end
+
+module Default = struct
+  let default_timeout = 0.1
+
+  let stop_after =
+    match Cli.Options.loop_mode with
+    | Infinite ->
+        `Loop
+    | Count 1 ->
+        `Timeout default_timeout
+    | Count n ->
+        `Count n
+
+  (* This is low enough so that it should not be an issue in practice
+     and detect obvious problems. *)
+  let minimum_number_of_samples = 50
+
+  (* This is low enough so that it should not be an issue in practice
+     and detect obvious problems. *)
+  let expected_sampling_ratio = 0.1
+
+  (* This may slow down a bit the test. It is activated by default,
+     but the user can opt-out. When shrinking (i.e. we are finding a
+     counter-example) or when looping, it may not be necessary to get
+     execution statistics, hence we deactivate this option to speed up
+     the number of samples tested. *)
+  let compute_execution_statistics = Cli.statistics
+
+  (* By default a log will be issued every 2 seconds. *)
+  let log_statistics_frequency =
+    let v = Option.value ~default:2 Cli.log_statistics_frequnecy in
+    Mtime.Span.(v * s)
+end
+
+module Execution_statistics = struct
   type t =
-    { start: Mtime_clock.counter
-    ; min: Mtime.span
-    ; max: Mtime.span
-    ; avg: Mtime.span
-    ; count: int
-    ; total: Mtime.span
-    ; distinct_values: Set.t }
+    { start: Mtime_clock.counter (* When the test started. *)
+    ; min: Mtime.span (* Minimum execution time on a sample. *)
+    ; max: Mtime.span (* Maximum execution time on a sample. *)
+    ; avg: Mtime.span (* Average execution time. *)
+    ; count: int (* Number of samples tested. *)
+    ; total: Mtime.span (* Total execution time since the test has started. *)
+    ; distinct_values: Set.t (* Distinct number of samples tested. *) }
 
   let empty () =
     { start= Mtime_clock.counter ()
@@ -80,11 +136,15 @@ module Stats = struct
     | `Loop ->
         false
     | `Count n ->
-        stats.count > n
+        stats.count >= n
     | `Timeout t ->
         t *. 1_000_000_000. < Mtime.Span.to_float_ns stats.total
 
   let samples stats = Set.cardinal stats.distinct_values
+
+  let pp_short fmt {count; total; _} =
+    Format.fprintf fmt "Execution time: %a@.Number of executions: %d"
+      Mtime.Span.pp total count
 
   let pp fmt ({start= _; min; max; avg; count; total; distinct_values} as stats)
       =
@@ -99,11 +159,21 @@ module Stats = struct
       (sampling_ratio stats)
 end
 
-let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
-    ~pp ~regression ~capture ~shrink ~stop_after ~on_sample gen f =
-  let update stats value =
-    on_sample value ;
-    Stats.update stats (hash value)
+let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples
+    ~compute_execution_statistics ~log_statistics_frequency ~hash ~pp
+    ~regression ~capture ~shrink ~stop_after ~on_sample gen f =
+  let update (stats : Execution_statistics.t) value =
+    if not compute_execution_statistics then
+      if Mtime.Span.compare log_statistics_frequency Mtime.Span.zero >= 0 then
+        (* We only update the number of samples tested. This is used to
+           print a log when we run the test in loop. *)
+        { stats with
+          Execution_statistics.count= stats.count + 1
+        ; total= Mtime_clock.count stats.start }
+      else stats
+    else (
+      on_sample value ;
+      Execution_statistics.update stats (hash value) )
   in
   (* Tezt uses [Random] for initializing the seed. For compatibility
      with OCaml 4.14, the library uses a different module.
@@ -152,6 +222,8 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
       let finally () =
         Unix.dup2 ~cloexec:true stdout Unix.stdout ;
         Unix.dup2 ~cloexec:true stderr Unix.stderr ;
+        Unix.close stdout ;
+        Unix.close stderr ;
         Unix.close dump_stdout ;
         Unix.close dump_stderr
       in
@@ -178,9 +250,30 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
         | Error (`Fail message) ->
             Error (Tree.return x, message, stats) )
   in
+  let initial_logging =
+    let now = Mtime_clock.now () in
+    if Mtime.Span.compare log_statistics_frequency Mtime.Span.zero > 0 then
+      Mtime.add_span now log_statistics_frequency |> Option.get
+    else
+      (* Assuming we won't run the test for a whole year, nothing will be printed. *)
+      Mtime.add_span now Mtime.Span.year |> Option.get
+  in
+  let next_logging = ref initial_logging in
+  (* This requires to be in no capture mode. *)
+  let show_statistics stats =
+    if Mtime.is_later (Mtime_clock.now ()) ~than:!next_logging then (
+      next_logging :=
+        Mtime.add_span !next_logging log_statistics_frequency |> Option.get ;
+      if compute_execution_statistics then
+        log ~level:Report "%a" Execution_statistics.pp stats
+      else log ~level:Report "%a" Execution_statistics.pp_short stats )
+  in
   (* Repeat the function [f] [count] times with random inputs. *)
   let rec loop stats =
-    if Stats.should_stop stop_after stats then Ok stats
+    (* When using loop, it can be useful to print a text to ensure
+       liveness. *)
+    show_statistics stats ;
+    if Execution_statistics.should_stop stop_after stats then Ok stats
     else
       let tree = Gen.run gen (get_state ()) in
       let result = f (Tree.root tree) in
@@ -189,12 +282,12 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
       | Ok _x ->
           loop stats
       | Error `Bad_value ->
-          (* We remove this sampling. *)
-          loop (Stats.uncount stats (hash (Tree.root tree)))
+          (* We remove this sampling since it should not count. *)
+          loop (Execution_statistics.uncount stats (hash (Tree.root tree)))
       | Error (`Fail message) ->
           Error (tree, message, stats)
   in
-  let stats = Stats.empty () in
+  let stats = Execution_statistics.empty () in
   let result =
     with_capture (fun () ->
         match regressions stats regression with
@@ -206,11 +299,11 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
   match result with
   | Ok stats ->
       log "No counter-example found" ;
-      log ~level:Debug "Runtime statistics:@.%a" Stats.pp stats ;
+      log ~level:Debug "Runtime statistics:@.%a" Execution_statistics.pp stats ;
       (* We consider the test fails if it did not run with enough
          distinct samples. This is because this is probably an error
          that should be notified and is hard to catch otherwise. *)
-      let sampling_ratio = Stats.sampling_ratio stats in
+      let sampling_ratio = Execution_statistics.sampling_ratio stats in
       if sampling_ratio < expected_sampling_ratio then
         let msg =
           Format.asprintf
@@ -220,10 +313,11 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
              sampling ratio (default: %f). Otherwise, it may be possible there \
              is an issue with the generator used by the test."
             sampling_ratio expected_sampling_ratio
-            default_minimum_sampling_ratio
+            Default.expected_sampling_ratio
         in
         `Not_enough_samples msg
-      else if Stats.samples stats < minimum_number_of_samples then
+      else if Execution_statistics.samples stats < minimum_number_of_samples
+      then
         let msg =
           Format.asprintf
             "No counter example was found. However, the property was run with \
@@ -231,15 +325,15 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
              with at least %d. If this is expected, consier decreasing the \
              expected number of samples (default: %d). Otherwise, it may be \
              possible there is an issue the property or the generator."
-            (Stats.samples stats) minimum_number_of_samples
-            default_minimum_number_of_samples
+            (Execution_statistics.samples stats)
+            minimum_number_of_samples Default.minimum_number_of_samples
         in
         `Not_enough_samples msg
       else `Ok
   | Error (tree, message, stats) -> (
       log "First counter example found: %a@.With error:@.%s@." pp
         (Tree.root tree) message ;
-      log ~level:Debug "Runtime statistics:@.%a@." Stats.pp stats ;
+      log ~level:Debug "Runtime statistics:@.%a@." Execution_statistics.pp stats ;
       let counter_example =
         if shrink then (
           log "Start shrinking..." ;
@@ -274,34 +368,31 @@ let run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
       | Error (`Fail err) ->
           `Failed err )
 
-let shrink =
-  Clap.flag ~set_long:"shrink"
-    ~description:"Use for PBT test to find a smaller counter-example" false
-
-let capture =
-  Clap.flag ~unset_long:"no-capture"
-    ~description:
-      "While running examples, do not capture any output from stdout or stderr"
-    true
-
-let aggressive =
-  Clap.default_int ~long:"aggressive"
-    ~description:"Make the shrinking heuristic more aggressive (should be >= 1)"
-    0
-
 let register ?(hash = Hashtbl.hash)
     ?(pp =
       fun fmt _s ->
         Format.fprintf fmt "<Unable to print the value: no printer given>")
-    ?(expected_sampling_ratio = default_minimum_sampling_ratio)
-    ?(minimum_number_of_samples = default_minimum_number_of_samples)
-    ?(regression = []) ?(stop_after = default_stop_after)
-    ?(on_sample = fun _ -> ()) ~__FILE__ ~title ~tags ~gen ~property () =
+    ?(compute_execution_statistics = Default.compute_execution_statistics)
+    ?(expected_sampling_ratio =
+      if compute_execution_statistics then Default.expected_sampling_ratio
+      else 0.0)
+    ?(minimum_number_of_samples =
+      if compute_execution_statistics then Default.minimum_number_of_samples
+      else 0) ?log_statistics_frequency ?(regression = [])
+    ?(stop_after = Default.stop_after) ?(on_sample = fun _ -> ()) ~__FILE__
+    ~title ~tags ~gen ~property () =
   Test.register ~seed:Random ~__FILE__ ~title ~tags
   @@ fun () ->
+  let log_statistics_frequency =
+    Option.fold ~none:Default.log_statistics_frequency
+      ~some:(fun n -> Mtime.Span.(n * s))
+      log_statistics_frequency
+  in
+  let open Cli in
   match
-    run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples ~hash
-      ~pp ~regression ~capture ~shrink ~stop_after ~on_sample gen property
+    run ~aggressive ~expected_sampling_ratio ~minimum_number_of_samples
+      ~compute_execution_statistics ~log_statistics_frequency ~hash ~pp
+      ~regression ~capture ~shrink ~stop_after ~on_sample gen property
   with
   | `Ok ->
       Lwt.return_unit

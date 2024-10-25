@@ -140,14 +140,9 @@ module Forest : sig
   val make : 'a -> ('a -> 'a Seq.t) -> 'a t
   (** [make root ] produces a forest with a single tree by using {!make} *)
 
-  val first : 'a t -> 'a tree
-  (** [first forest] returns the first tree of the forest. This
-      function is total since the module guarantees the forest is
-      never empty. *)
-
-  val is_singleton : 'a t -> bool
-  (** [is_singleton forest] returns [true] if there is a single tree
-      in the forest. [false] otherwise. *)
+  val uncons : 'a t -> 'a tree * 'a tree Seq.t
+  (** [uncons forest] splits the forest into a tree and a sequence of
+      trees. *)
 
   val sequence : 'a t -> 'a t Seq.t -> 'a t
   (** [seqnece tree forest] returns a new forest made of a sequence of

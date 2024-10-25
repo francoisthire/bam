@@ -1,3 +1,3 @@
 (library
-  (name simple_failure)
-  (libraries tezt-bam))
+ (name simple_failure)
+ (libraries tezt-bam))

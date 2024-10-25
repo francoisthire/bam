@@ -94,8 +94,10 @@ module Pbt : sig
   val register :
        ?hash:('a -> int)
     -> ?pp:(Format.formatter -> 'a -> unit)
+    -> ?compute_execution_statistics:bool
     -> ?expected_sampling_ratio:float
     -> ?minimum_number_of_samples:int
+    -> ?log_statistics_frequency:int
     -> ?regression:'a list
     -> ?stop_after:[`Timeout of float | `Count of int | `Loop]
     -> ?on_sample:('a -> unit)
@@ -140,21 +142,39 @@ module Pbt : sig
     this is to ensure the property is run on many samples as detailed
     below.
 
-    One issue with proerty-based testing is that it is not easy to
+    One issue with property-based testing is that it is not easy to
     ensure that the generator and the property are run an a large
     range of values. The default behaviour of this register function
     is to prevent such a case to occur. To do so, two parameters are
     used: [expected_sampling_ratio] and[minimum_number_of_samples].
 
-    [expected_sampling_ratio] (by default 0.10) ensures that the
-    generator generates in general different sample.
+    [compute_execution_statistics] enables to compute statistics on
+    the test. It will compute the number of distinct values generated,
+    or statistics about the execution time of each sample. Its default
+    value is [true] unless shrinking is activated or [stop_after] is
+    [`Loop]. The reason is that this may slow down the execution of
+    the test which is superfluous when we shrink or we try to find a
+    counter-example.
+ 
+    [expected_sampling_ratio] ensures that the generator generates in
+    general different sample. Its default value is [0.10] if
+    [compute_execution_statistics] is [true], [0.0] otherwise.
 
-    [minimum_number_of_samples] (by default 50) ensures that the
-    property is run at least that numbero f times.
+    [minimum_number_of_samples] ensures that the property is run at
+    least that numbero f times. Its default value is [50] if
+    [compute_execution-statistics] is [true], [0] otherwise.
 
-    Those default values should ensure that it is not a constraint
-    most of the times, while at the same time should capture
-    erronenous cases.
+    [log_statistics_frequency] controls the frequency (in seconds) at
+    which a log shows some execution statistics. Don't forget to use
+    [--no-capture] if you want to see the log on [stdout], see the
+    corresponding documentation for this option. A negative value for
+    this parameter combined with [compute_execution_statistics] sets
+    to [false] ensures no statistics are computed for this test. Its
+    default value is [2].
+
+    The default values should ensure that we can capture obvious
+    erroneous cases where the test is not executed on enough samples
+    without being too restrictive.
 
     [stop_after] allows to determine how many samples should be drawn
     to run the property on. By default it is set to [`Timeout 0.10],
@@ -172,7 +192,10 @@ module Pbt : sig
     found.
 
     If [hash] is provided, it will be used to [hash] values. This
-    function is used to count the number of distinct samples.
+    function is used to count the number of distinct samples. Default
+    value is [Stdlib.Hashtbl.hash]. This function may generate a lot
+    of collisions on complex values. You can redefine a better [hash]
+    function via [ppx-hash] for example.
 
     [regression] can be instantiated to be sure that some fixed
     deterministic examples is always run.
@@ -183,6 +206,6 @@ module Pbt : sig
     counter-example. An explanation about shrinking can be found in
     the documentation of the package [Bam].
 
-    - [--no-capture] so that output is not captured
- *)
+    - [--no-capture] so that output is not captured. Its default value
+    is [true] unless [stop_after] is set to [`Loop]. *)
 end
