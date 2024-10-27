@@ -3,8 +3,8 @@ opam-version: "2.0"
 synopsis: "A PPX deriving generators for OCaml types"
 description:
   "Provides a way to automatically get generators for a given type"
-maintainer: ["François Thiré"]
-authors: ["François Thiré"]
+maintainer: ["François Thiré <bam@saroupille.com>"]
+authors: ["François Thiré <bam@saroupille.com>"]
 license: "MIT"
 tags: ["test" "pbt" "shrinking" "internal" "bam" "ppx"]
 homepage: "https://github.com/francoisthire/bam"
