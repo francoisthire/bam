@@ -1,5 +1,6 @@
 open Ppxlib
 
+
 let is_identifier_expr (expr : expression) : bool =
   match expr.pexp_desc with Pexp_ident _ -> true | _ -> false
 
@@ -15,7 +16,7 @@ let rec is_type_var_used_in_core_type var_name (ct : core_type) : bool =
   | Ptyp_constr (_, args) ->
       List.exists (is_type_var_used_in_core_type var_name) args
   | Ptyp_alias (ct, s) ->
-      s.txt = var_name || is_type_var_used_in_core_type var_name ct
+      s = var_name || is_type_var_used_in_core_type var_name ct
   | Ptyp_poly (_, ct) ->
       is_type_var_used_in_core_type var_name ct
   | _ ->
