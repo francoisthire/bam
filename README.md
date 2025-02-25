@@ -8,12 +8,6 @@ across numerous randomly generated values. When a counterexample is
 found, a shrinker can be employed to produce smaller, more
 comprehensible counterexamples, thus facilitating easier debugging.
 
-Bam is an OCaml library designed for property-based testing (PBT).
-Property-based testing is a methodology where properties are verified
-across numerous randomly generated values. When a counterexample is
-found, a shrinker can be employed to produce smaller, more
-comprehensible counterexamples, thus facilitating easier debugging.
-
 ## Key Features
 
 - **Monad-like Generators**: The library facilitates the easy creation of
