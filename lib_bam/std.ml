@@ -122,16 +122,17 @@ let pair ?(shrinker = Shrinker.Default) left right =
       let* b = right in
       return (a, b) |> Gen.(with_merge (Merge.of_compare ~compare))
 
+(* Use an unbiased integer range [0;1] to generate booleans. *)
 let bool ?(shrinker = Shrinker.Default) () =
   match shrinker with
   | Manual shrinker ->
-      let*! root = int ~min:0 ~max:2 () in
+      let*! root = int ~min:0 ~max:1 () in
       Gen.make (root = 0) shrinker
   | Default ->
-      let* x = int ~min:0 ~max:2 () in
+      let* x = int ~min:0 ~max:1 () in
       if x = 0 then return false else return true
   | Bool b ->
-      let* x = int ~min:0 ~max:2 () in
+      let* x = int ~min:0 ~max:1 () in
       if x = 0 = b then return true else return false
 
 let char ?root ?(shrinker = Shrinker.Default) ?(printable = true) () =
