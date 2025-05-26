@@ -33,6 +33,18 @@ let std_oneof () =
   let str = values |> List.map string_of_int |> String.concat " " in
   Regression.capture str ; Lwt.return_unit
 
+let std_char_custom_root () =
+  Test.register ~__FILE__ ~title:"std char custom root"
+    ~tags:["std"; "char"; "root"]
+  @@ fun () ->
+  let gen = Bam.Std.char ~printable:false ~root:(Char.chr 5) () in
+  let v =
+    Bam.Gen.run gen (Bam.Gen.Random.make [|0|]) |> Bam.Tree.root |> Char.code
+  in
+  if v = 5 then Lwt.return_unit
+  else Test.failf "expected 5 got %d" v
+
 let register () =
   std_int_range_inclusive_bounds () ;
-  std_oneof ()
+  std_oneof () ;
+  std_char_custom_root ()
