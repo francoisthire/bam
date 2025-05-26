@@ -10,7 +10,7 @@ let register () =
   let property x =
     Format.eprintf "HEY: %d@." x ;
     if x < 100 && x <> 16 then Ok ()
-    else Error (`Fail "integer is not smallar than 100")
+    else Error (`Fail "integer is not smaller than 100")
   in
   Pbt.register ~pp:Format.pp_print_int ~__FILE__ ~title:"Debugging with bam"
     ~tags:["bam"; "debugging"] ~gen ~property ()
@@ -27,7 +27,7 @@ HEY: 1531078954999384395
 [15:46:01.805] [pbt] Counter example found:
 [15:46:01.805] [pbt] 100
 [15:46:01.805] [error] Test failed with error:
-[15:46:01.805] [error] integer is not smallar than 100
+[15:46:01.805] [error] integer is not smaller than 100
 [15:46:01.805] [FAILURE] (1/1, 1 failed) Debugging with bam
 [15:46:01.805] Try again with: _build/default/example/main.exe --verbose --file example/3-debugging/debugging.ml --title 'Debugging with bam' --seed 830377664
 ```
@@ -60,7 +60,7 @@ HEY: 16
 [16:08:35.821] [pbt] Counter example found:
 [16:08:35.821] [pbt] 16
 [16:08:35.821] [error] Test failed with error:
-[16:08:35.821] [error] integer is not smallar than 100
+[16:08:35.821] [error] integer is not smaller than 100
 [16:08:35.821] [FAILURE] (1/1, 1 failed) Debugging with bam
 [16:08:35.821] Try again with: _build/default/example/main.exe --verbose --file example/3-debugging/debugging.ml --title 'Debugging with bam' --seed 353027053
 ```

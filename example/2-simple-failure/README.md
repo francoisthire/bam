@@ -8,7 +8,7 @@ open Tezt_bam
 let register () =
   let gen = Std.int () in
   let property x =
-    if x < 100 then Ok () else Error (`Fail "integer is not smallar than 100")
+    if x < 100 then Ok () else Error (`Fail "integer is not smaller than 100")
   in
   Pbt.register ~pp:Format.pp_print_int ~__FILE__
     ~title:"Simple failure example with bam" ~tags:["bam"; "simple_failure"]
@@ -28,7 +28,7 @@ dune exec example/main.exe -- simple_failure
 [15:30:55.229] [pbt] Counter example found:
 [15:30:55.229] [pbt] 323253551143260932
 [15:30:55.229] [error] Test failed with error:
-[15:30:55.229] [error] integer is not smallar than 100
+[15:30:55.229] [error] integer is not smaller than 100
 [15:30:55.229] [FAILURE] (1/1, 1 failed) Simple failure example with bam
 [15:30:55.229] Try again with: _build/default/example/main.exe --verbose --file example/2-simple-failure/simple_failure.ml --title 'Simple failure example with bam' --seed 555586205
 ```
@@ -47,7 +47,7 @@ $ dune exec example/main.exe -- simple_failure --shrink --seed 555586205
 [15:36:00.803] [pbt] Counter example found:
 [15:36:00.803] [pbt] 100
 [15:36:00.803] [error] Test failed with error:
-[15:36:00.803] [error] integer is not smallar than 100
+[15:36:00.803] [error] integer is not smaller than 100
 [15:36:00.803] [FAILURE] (1/1, 1 failed) Simple failure example with bam
 [15:36:00.803] Try again with: _build/default/example/main.exe --verbose --file example/2-simple-failure/simple_failure.ml --title 'Simple failure example with bam' --seed 555586205
 ```
