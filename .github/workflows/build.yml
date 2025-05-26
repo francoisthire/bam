@@ -25,11 +25,13 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
+          opam-disable-sandboxing: true
+          allow-sudo: false
       - name: Install dependencies
         run: |
           opam update
           opam upgrade
-          opam install . --deps-only -t
+          opam install . --deps-only -t --yes --no-depexts
       - name: Build Bam
         run: |
           eval $(opam env)
