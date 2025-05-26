@@ -1,5 +1,10 @@
 Changelog for Bam library
 
+## Unreleased
+
+- Fix `Bam.Std.bool` to use `int ~min:0 ~max:1` for an unbiased boolean
+  generator.
+
 ## v0.3 (2024-10-25)
 
 - Fix a file descriptor leak (#8)

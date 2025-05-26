@@ -53,6 +53,15 @@ opam install bam tezt-bam
 Compatibility is ensured for OCaml versions `4.14.2`, `5.0.0` and
 `5.1.0`.
 
+The library and its examples rely on the `dune` build system.  If `dune`
+is not already available on your machine, install it with opam and
+refresh your environment:
+
+```bash
+opam install dune
+eval $(opam env)
+```
+
 ## Usage
 
 A simple test can be run as follows:
