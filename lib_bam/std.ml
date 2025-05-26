@@ -138,7 +138,7 @@ let bool ?(shrinker = Shrinker.Default) () =
 let char ?root ?(shrinker = Shrinker.Default) ?(printable = true) () =
   let base = if printable then Char.code 'a' else 0 in
   let max = if printable then 26 else 256 in
-  let root = root |> Option.map (fun root -> Char.code root - Char.code 'a') in
+  let root = root |> Option.map (fun root -> Char.code root - base) in
   match shrinker with
   | Manual shrinker ->
       let*! root = int ?root ~min:0 ~max () in
