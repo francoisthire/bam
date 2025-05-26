@@ -299,7 +299,8 @@ let derive_type_declarations rec_flag type_declarations :
            { pvb_pat= generator_name
            ; pvb_expr= gen_expr
            ; pvb_attributes= []
-           ; pvb_loc= loc } )
+           ; pvb_loc= loc
+           ; pvb_constraint= None } )
   in
   Ast_builder.Default.pstr_value_list ~loc is_recursive bindings
 
