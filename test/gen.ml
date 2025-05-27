@@ -9,6 +9,47 @@ let capture_tree ?(filter = Tree.dfs_with_depth) to_string tree =
          Regression.capture ~eol:false string ) ;
   Regression.capture ""
 
+let of_seq_order () =
+  Test.register ~__FILE__ ~title:"Gen.of_seq order" ~tags:["gen"; "of_seq"]
+  @@ fun () ->
+  let gen =
+    [1; 2; 3] |> List.to_seq |> Gen.of_seq
+  in
+  let run () = Gen.run gen (Gen.Random.make [|0|]) |> Tree.root in
+  let values = List.rev [run (); run (); run (); run ()] in
+  match values with
+  | [Some 1; Some 2; Some 3; None] -> Lwt.return_unit
+  | _ ->
+      let pp = function None -> "None" | Some i -> string_of_int i in
+      Test.fail "unexpected sequence: %s" (values |> List.map pp |> String.concat ", ")
+
+let run_failure () =
+  Test.register ~__FILE__ ~title:"Gen.run failure" ~tags:["gen"; "run"]
+  @@ fun () ->
+  (* [Gen.sequence] creates a generator that may return several root values.
+     Running such a generator with [Gen.run] should fail. *)
+  let faulty_gen : int Gen.t =
+    Gen.sequence (Gen.return 1) (Seq.return (Gen.return 2))
+  in
+  let state = Gen.Random.make [|0|] in
+  ( try
+      ignore (Gen.run faulty_gen state) ;
+      Test.fail "Gen.run should have failed"
+    with Failure msg ->
+      let expected =
+        "[Gen.run] was called with an erroneous generator. The generator is \
+         expected to return a single value. Instead: multiple values were \
+         returned. You should probably fix your generator or provide a \
+         [on_failure] argument to [Gen.run]."
+      in
+      if String.equal msg expected then ()
+      else Test.fail "unexpected message: %s" msg ) ;
+  let tree =
+    Gen.run ~on_failure:(fun _ -> Tree.return 42) faulty_gen state
+  in
+  if Tree.root tree = 42 then Lwt.return_unit
+  else Test.fail "on_failure callback not used"
+
 let z_range_regression () =
   Regression.register ~__FILE__ ~title:"Gen.z_range" ~tags:["gen"; "z_range"]
   @@ fun () ->
@@ -190,4 +231,6 @@ let register () =
   crunch () ;
   map_bind_return () ;
   root () ;
+  of_seq_order () ;
+  run_failure () ;
   hard_coded_values ()
