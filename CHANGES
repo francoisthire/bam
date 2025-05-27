@@ -1,5 +1,9 @@
 Changelog for Bam library
 
+## Unreleased
+
+- Prepare for OCaml 5.2 AST bump (#12)
+
 ## v0.3 (2024-10-25)
 
 - Fix a file descriptor leak (#8)
