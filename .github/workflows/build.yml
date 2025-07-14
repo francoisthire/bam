@@ -14,10 +14,8 @@ jobs:
         ocaml-compiler: [
             # OCaml LTS version
             ocaml.4.14.2,
-            # ocaml-system for Fedora 39
-            ocaml.5.0.0,
-            # ocaml-system for Archlinux
-            ocaml.5.1.0
+            # Last official release
+            ocaml.5.3.0
           ]
     steps:
       - uses: actions/checkout@v4
