@@ -2,8 +2,8 @@
 opam-version: "2.0"
 synopsis: "A plugin of [bam] for Tezt"
 description: "Provides a way to register PBT tests with Tezt"
-maintainer: ["François Thiré <bam@saroupille.com>"]
-authors: ["François Thiré <bam@saroupille.com>"]
+maintainer: ["François Thiré"]
+authors: ["François Thiré"]
 license: "MIT"
 tags: ["test" "tezt" "pbt" "shrinking" "internal" "bam"]
 homepage: "https://github.com/francoisthire/bam"
@@ -13,8 +13,8 @@ depends: [
   "ocaml"
   "dune" {>= "3.7" & >= "3.7"}
   "tezt" {>= "4.0"}
-  "bam"  {>= "0.3"}
-  "bam-ppx" {>= "0.3"}
+  "bam"
+  "bam-ppx"
   "mtime" {>= "2.0"}
   "odoc" {with-doc}
 ]

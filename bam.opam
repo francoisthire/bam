@@ -3,8 +3,8 @@ opam-version: "2.0"
 synopsis: "A property-based testing library with internal shrinking"
 description:
   "A property-based testing allowing to define generators with internal shrinking easily"
-maintainer: ["François Thiré <bam@saroupille.com>"]
-authors: ["François Thiré <bam@saroupille.com>"]
+maintainer: ["François Thiré"]
+authors: ["François Thiré"]
 license: "MIT"
 tags: ["test" "pbt" "shrinking" "internal"]
 homepage: "https://github.com/francoisthire/bam"
