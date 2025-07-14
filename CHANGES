@@ -1,6 +1,6 @@
 Changelog for Bam library
 
-## Unreleased
+## v0.4
 
 - Bam-ppx is compatible with OCaml 5.3
 
