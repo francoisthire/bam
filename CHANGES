@@ -2,7 +2,11 @@ Changelog for Bam library
 
 ## Unreleased
 
-- Prepare for OCaml 5.2 AST bump (#12)
+- Bam-ppx is compatible with OCaml 5.3
+
+- Make Std.bool generator unbiased
+
+- Fix Std.char generator when using non-printable characters
 
 ## v0.3 (2024-10-25)
 
