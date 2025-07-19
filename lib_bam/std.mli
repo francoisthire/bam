@@ -230,6 +230,24 @@ val oneofl : ?shrinker:int Shrinker.t -> 'a list -> 'a t
 (** [oneofl ?shrinker list] is an alias for
     [oneofg ?shrinker (List.map Gen.return list] *)
 
+val option :
+     ?shrinker:int Shrinker.t
+  -> ?none_weight:int
+  -> ?some_weight:int
+  -> 'a t
+  -> 'a option t
+(** [option ?choice_shrinker ?none_weight ?some_weight gen] builds a generator
+    of type ['a option t] that produces
+
+    - [None] with “relative” weight [none_weight]
+    - [Some x] with “relative” weight [some_weight], where [x] ← [gen]
+
+    Both [none_weight] and [some_weight] default to [1].  Internally,
+    this is just a two‑case [oneof] (index 0 = None, 1 = Some); the
+    [choice_shrinker] (default [Shrinker.Int 0]) will therefore always
+    try to shrink towards [None] first.
+*)
+
 module Syntax : sig
   val return : 'a -> 'a t
   (** Syntactic sugar {!return} *)

@@ -284,3 +284,10 @@ let oneofg : ?shrinker:int Shrinker.t -> 'a Gen.t list -> 'a Gen.t =
 
 let oneofl : ?shrinker:int Shrinker.t -> 'a list -> 'a Gen.t =
  fun ?shrinker list -> oneofg ?shrinker (List.map Gen.return list)
+
+let option ?shrinker ?(none_weight = 1) ?(some_weight = 1) gen =
+  oneof ?shrinker
+    [ (none_weight, return None)
+    ; ( some_weight
+      , let* value = gen in
+        return (Some value) ) ]
