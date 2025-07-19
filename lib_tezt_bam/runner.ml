@@ -26,7 +26,8 @@ module Cli = struct
   let aggressive =
     Clap.default_int ~section ~long:"aggressive"
       ~description:
-        "Make the shrinking heuristic more aggressive (should be >= 1)." 0
+        "Make the shrinking heuristic more aggressive (should be >= 1)."
+      0
 
   let statistics =
     Clap.flag ~section ~description:"Compute execution statistics"

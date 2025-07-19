@@ -12,16 +12,16 @@ let capture_tree ?(filter = Tree.dfs_with_depth) to_string tree =
 let of_seq_order () =
   Test.register ~__FILE__ ~title:"Gen.of_seq order" ~tags:["gen"; "of_seq"]
   @@ fun () ->
-  let gen =
-    [1; 2; 3] |> List.to_seq |> Gen.of_seq
-  in
+  let gen = [1; 2; 3] |> List.to_seq |> Gen.of_seq in
   let run () = Gen.run gen (Gen.Random.make [|0|]) |> Tree.root in
   let values = List.rev [run (); run (); run (); run ()] in
   match values with
-  | [Some 1; Some 2; Some 3; None] -> Lwt.return_unit
+  | [Some 1; Some 2; Some 3; None] ->
+      Lwt.return_unit
   | _ ->
       let pp = function None -> "None" | Some i -> string_of_int i in
-      Test.fail "unexpected sequence: %s" (values |> List.map pp |> String.concat ", ")
+      Test.fail "unexpected sequence: %s"
+        (values |> List.map pp |> String.concat ", ")
 
 let run_failure () =
   Test.register ~__FILE__ ~title:"Gen.run failure" ~tags:["gen"; "run"]
@@ -44,9 +44,7 @@ let run_failure () =
       in
       if String.equal msg expected then ()
       else Test.fail "unexpected message: %s" msg ) ;
-  let tree =
-    Gen.run ~on_failure:(fun _ -> Tree.return 42) faulty_gen state
-  in
+  let tree = Gen.run ~on_failure:(fun _ -> Tree.return 42) faulty_gen state in
   if Tree.root tree = 42 then Lwt.return_unit
   else Test.fail "on_failure callback not used"
 
@@ -139,7 +137,8 @@ let float_in_bounds () =
       else
         Error
           (`Fail
-            (Format.asprintf "fail with: min:%f@ max:%f, value:%f" min max x) )
+             (Format.asprintf "fail with: min:%f@ max:%f, value:%f" min max x)
+          )
     else Ok ()
   in
   Tezt_bam.Pbt.register ~__FILE__ ~title:"Gen.float_in_bounds"

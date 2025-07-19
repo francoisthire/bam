@@ -148,7 +148,8 @@ let float_range :
     -> max:float
     -> unit
     -> float t =
- fun ?root ?exhaustive_search_digits ?precision_digits ?origin ~min ~max () rs ->
+ fun ?root ?exhaustive_search_digits ?precision_digits ?origin ~min ~max ()
+     rs ->
   let origin =
     Option.value origin ~default:(if min <= 0. && 0. <= max then 0. else min)
   in

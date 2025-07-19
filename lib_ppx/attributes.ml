@@ -61,8 +61,7 @@ end = struct
         { runtime with
           limits=
             { runtime.limits with
-              ranged_min= Ranged_dmap.add Int min runtime.limits.ranged_min } }
-        )
+              ranged_min= Ranged_dmap.add Int min runtime.limits.ranged_min } } )
 
   let int_max context =
     Attribute.declare "gen.int.max" context
@@ -71,8 +70,7 @@ end = struct
         { runtime with
           limits=
             { runtime.limits with
-              ranged_max= Ranged_dmap.add Int max runtime.limits.ranged_max } }
-        )
+              ranged_max= Ranged_dmap.add Int max runtime.limits.ranged_max } } )
 
   let int32_min context =
     Attribute.declare "gen.int32.min" context

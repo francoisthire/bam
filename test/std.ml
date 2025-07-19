@@ -41,8 +41,7 @@ let std_char_custom_root () =
   let v =
     Bam.Gen.run gen (Bam.Gen.Random.make [|0|]) |> Bam.Tree.root |> Char.code
   in
-  if v = 5 then Lwt.return_unit
-  else Test.fail "expected 5 got %d" v
+  if v = 5 then Lwt.return_unit else Test.fail "expected 5 got %d" v
 
 let register () =
   std_int_range_inclusive_bounds () ;
